@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerSProxy.Logic
+namespace ServerSProxy.Logic.Commands
 {
-    internal class Player
+    internal class Command
     {
     }
 }
