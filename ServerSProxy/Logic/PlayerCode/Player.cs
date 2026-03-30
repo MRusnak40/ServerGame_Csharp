@@ -1,6 +1,7 @@
 ﻿using ServerSProxy.Logic.GameWorldCode;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,9 @@ namespace ServerSProxy.Logic.PlayerCode
         private string _name;
         private Room _currentRoom;
         private ClassEnumPlayer _class;
-
+        private bool _isAlive; //is alive or not, if not, cant do anything, but can be revived
+        private bool _isInCombat;//cant be fight with two people at the same time
+        private bool _isKillable;//is in chat
 
         //stats
         private int _experience;
@@ -50,6 +53,18 @@ namespace ServerSProxy.Logic.PlayerCode
         {
             get { return _name; }
             set { _name = value; }
+        }
+
+        public bool IsInCombat
+        {
+            get { return _isInCombat; }
+            set { _isInCombat = value; }
+        }
+
+        public bool IsKillable
+        {
+            get { return _isKillable; }
+            set { _isKillable = value; }
         }
 
         public Room CurrentRoom
@@ -140,6 +155,12 @@ namespace ServerSProxy.Logic.PlayerCode
         {
             get { return _strength; }
             set { _strength = value; }
+        }
+
+        public bool IsAlive
+        {
+            get { return _isAlive; }
+            set { _isAlive = value; }
         }
 
         // toString

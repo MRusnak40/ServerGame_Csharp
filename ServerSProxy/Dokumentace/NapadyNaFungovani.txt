@@ -1,0 +1,5 @@
+npc bude mit  list ukolu a pokud budes chtit si od nej nejaky vzit dostanes nejaky random a zkopiruje se ti do tveho lsitu aktivnich 
+
+Enemy muze byt stejny jako player a bude mit stejne vlastnosti 
+
+Hraci ve stejne mistnosti dostanou informaci o tom ze nekdo si nevzal predmet a zustane v lsitu mistnsoti a nekdo to bude moc t vzit

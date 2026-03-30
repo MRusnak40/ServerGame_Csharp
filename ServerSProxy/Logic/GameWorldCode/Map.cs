@@ -8,5 +8,14 @@ namespace ServerSProxy.Logic.GameWorldCode
 {
     internal class Map
     {
+
+        public Map() { }
+
+
+        private string _nameOfMap;
+
+        List<Room>? _roomsInMap;
+
+
     }
 }

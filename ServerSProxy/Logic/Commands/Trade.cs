@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerSProxy.Logic.PlayerCode
+namespace ServerSProxy.Logic.Commands
 {
-    internal class Item
+    internal class Trade
     {
     }
 }
