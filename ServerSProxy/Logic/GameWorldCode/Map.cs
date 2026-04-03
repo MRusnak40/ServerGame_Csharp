@@ -17,5 +17,17 @@ namespace ServerSProxy.Logic.GameWorldCode
         List<Room>? _roomsInMap;
 
 
+
+        public string NameOfMap
+        {
+            get { return _nameOfMap; }
+            set { _nameOfMap = value; }
+        }
+
+        public List<Room>? RoomsInMap
+        {
+            get { return _roomsInMap; }
+            set { _roomsInMap = value; }
+        }
     }
 }

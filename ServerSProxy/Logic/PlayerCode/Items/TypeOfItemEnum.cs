@@ -6,21 +6,24 @@ using System.Threading.Tasks;
 
 namespace ServerSProxy.Logic.PlayerCode.Items
 {
-    internal enum TypeOfItemEnum
+    internal class TypeOfItemEnum
     {
 
-        //weapons
-        SHIELD,
-        SWORD,
-        AXE,
-        MAGIC_STICK,
+        List<string> _typesOfItems = new List<string>() {};
 
-        //armor
-        HELMET,
-        ARMOR,
-        BOOTS,
-        LEG_ARMOR,
-        RUNE
 
+        /*
+            SHIELD,
+            SWORD,
+            AXE,
+            MAGIC_STICK,
+
+
+            HELMET,
+            ARMOR,
+            BOOTS,
+            LEG_ARMOR,
+            RUNE
+        */
     }
 }

@@ -17,6 +17,22 @@ namespace ServerSProxy.Logic.GameWorldCode
         private List<Player> _onlinePlayers;
 
 
+        public List<Map>? MapsInGameWorld
+        {
+            get { return _mapsInGameWorld; }
+            set { _mapsInGameWorld = value; }
+        }
 
+        public int NumberOfMapsInGameWorld
+        {
+            get { return _numberOfMapsInGameWorld; }
+            set { _numberOfMapsInGameWorld = value; }
+        }
+
+        public List<Player> OnlinePlayers
+        {
+            get { return _onlinePlayers; }
+            set { _onlinePlayers = value; }
+        }
     }
 }

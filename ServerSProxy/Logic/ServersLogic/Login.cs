@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerSProxy.Logic.PlayerCode;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,8 @@ namespace ServerSProxy.Logic.ServersLogic
     internal class Login
     {
         public Login() { }
+
+        //List<Login> _logins = new List<Login>() {};
 
         private string _username;
         private string _password;
@@ -35,7 +38,6 @@ namespace ServerSProxy.Logic.ServersLogic
             string hashedInput = HashPassword(password);
             return _password == hashedInput;
         }
-
 
 
 

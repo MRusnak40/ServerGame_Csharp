@@ -34,7 +34,65 @@ namespace ServerSProxy.Logic.NPCs
 
 
 
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
 
+        public int Level
+        {
+            get { return _level; }
+            set { _level = value; }
+        }
+
+        public int MaxHealth
+        {
+            get { return _maxHealth; }
+            set { _maxHealth = value; }
+        }
+
+        public int Health
+        {
+            get { return _health; }
+            set { _health = value; }
+        }
+
+        public int MaxShield
+        {
+            get { return _maxShield; }
+            set { _maxShield = value; }
+        }
+
+        public int Shield
+        {
+            get { return _shield; }
+            set { _shield = value; }
+        }
+
+        public int Stamina
+        {
+            get { return _stamina; }
+            set { _stamina = value; }
+        }
+
+        public int MaxStamina
+        {
+            get { return _maxStamina; }
+            set { _maxStamina = value; }
+        }
+
+        public int AttackSpeed
+        {
+            get { return _attackSpeed; }
+            set { _attackSpeed = value; }
+        }
+
+        public int Strength
+        {
+            get { return _strength; }
+            set { _strength = value; }
+        }
 
 
     }

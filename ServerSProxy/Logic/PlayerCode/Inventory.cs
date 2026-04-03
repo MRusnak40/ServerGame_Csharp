@@ -15,5 +15,30 @@ namespace ServerSProxy.Logic.PlayerCode
         private List<Item> _itemsPicked;
         private int _capacity;
 
+
+
+        public  Inventory(List<Item> items, List<Item> itemsPicked, int capacity)
+        {
+            Items = items;
+            ItemsPicked = itemsPicked;
+            Capacity = capacity;
+        }
+        public List<Item> Items
+        {
+            get { return _items; }
+            set { _items = value; }
+        }
+
+        public List<Item> ItemsPicked
+        {
+            get { return _itemsPicked; }
+            set { _itemsPicked = value; }
+        }
+
+        public int Capacity
+        {
+            get { return _capacity; }
+            set { _capacity = value; }
+        }
     }
 }

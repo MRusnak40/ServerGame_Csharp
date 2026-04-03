@@ -17,7 +17,29 @@ namespace ServerSProxy.Logic.NPCs
         private bool _isQuestGiver;
         private List<Quest> _questsToGive;
 
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
 
+        public string TextToTell
+        {
+            get { return _TextToTell; }
+            set { _TextToTell = value; }
+        }
+
+        public bool IsQuestGiver
+        {
+            get { return _isQuestGiver; }
+            set { _isQuestGiver = value; }
+        }
+
+        public List<Quest> QuestsToGive
+        {
+            get { return _questsToGive; }
+            set { _questsToGive = value; }
+        }
 
 
     }

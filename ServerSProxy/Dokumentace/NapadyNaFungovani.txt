@@ -3,3 +3,8 @@ npc bude mit  list ukolu a pokud budes chtit si od nej nejaky vzit dostanes neja
 Enemy muze byt stejny jako player a bude mit stejne vlastnosti 
 
 Hraci ve stejne mistnosti dostanou informaci o tom ze nekdo si nevzal predmet a zustane v lsitu mistnsoti a nekdo to bude moc t vzit
+
+Metoda pro vypis na konzoli pro hrace aby to fungovalo broadcast all a write to player
+
+
+player.Writer = clientWriter; // StreamWriter ze socketu

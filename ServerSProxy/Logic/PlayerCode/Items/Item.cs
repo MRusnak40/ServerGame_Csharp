@@ -33,7 +33,7 @@ namespace ServerSProxy.Logic.PlayerCode.Items
 
 
 
-        private TypeOfItemEnum _typeOfItem;
+        private string _typeOfItem;
 
 
 
@@ -44,6 +44,54 @@ namespace ServerSProxy.Logic.PlayerCode.Items
 
         // properties
 
+
+        public bool IsEquippable
+        {
+            get { return _isEquippable; }
+            set { _isEquippable = value; }
+        }
+
+        public int AttackBonus
+        {
+            get { return _attackBonus; }
+            set { _attackBonus = value; }
+        }
+
+        public int HealthBonus
+        {
+            get { return _healthBonus; }
+            set { _healthBonus = value; }
+        }
+
+        public int StaminaBonus
+        {
+            get { return _staminaBonus; }
+            set { _staminaBonus = value; }
+        }
+
+        public int ArmorBonus
+        {
+            get { return _armorBonus; }
+            set { _armorBonus = value; }
+        }
+
+        public int AttackSpeedBonus
+        {
+            get { return _attackSpeedBonus; }
+            set { _attackSpeedBonus = value; }
+        }
+
+        public int HealUPBonus
+        {
+            get { return _healUPBonus; }
+            set { _healUPBonus = value; }
+        }
+
+        public string TypeOfItem
+        {
+            get { return _typeOfItem; }
+            set { _typeOfItem = value; }
+        }
 
         public string Name
         {

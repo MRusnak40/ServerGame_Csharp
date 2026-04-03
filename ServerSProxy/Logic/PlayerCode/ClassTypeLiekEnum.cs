@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace ServerSProxy.Logic.PlayerCode
 {
-    internal enum  ClassEnumPlayer
+    internal class  ClassTypeLiekEnum
     {
-        WARRIOR,BERSERKER,MAGE,ARMORER
+        List<string> _classes = new List<string>() {};
+
+
+
+
 
 
 

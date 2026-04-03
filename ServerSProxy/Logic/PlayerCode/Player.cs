@@ -15,10 +15,12 @@ namespace ServerSProxy.Logic.PlayerCode
         //basic info
         private string _name;
         private Room _currentRoom;
-        private ClassEnumPlayer _class;
+        private string _class;
         private bool _isAlive; //is alive or not, if not, cant do anything, but can be revived
         private bool _isInCombat;//cant be fight with two people at the same time
         private bool _isKillable;//is in chat
+        private StreamWriter _writer;
+
 
         //stats
         private int _experience;
@@ -49,6 +51,13 @@ namespace ServerSProxy.Logic.PlayerCode
 
 
         // properties
+
+
+        public StreamWriter Writer
+        {
+            get { return _writer; }
+            set { _writer = value; }
+        }
         public string Name
         {
             get { return _name; }
@@ -73,7 +82,7 @@ namespace ServerSProxy.Logic.PlayerCode
             set { _currentRoom = value; }
         }
 
-        public ClassEnumPlayer Class
+        public string Class
         {
             get { return _class; }
             set { _class = value; }
