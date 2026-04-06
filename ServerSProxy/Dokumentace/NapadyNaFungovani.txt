@@ -8,3 +8,6 @@ Metoda pro vypis na konzoli pro hrace aby to fungovalo broadcast all a write to 
 
 
 player.Writer = clientWriter; // StreamWriter ze socketu
+
+
+nezapomen zkontrolovat zpravnost cesty

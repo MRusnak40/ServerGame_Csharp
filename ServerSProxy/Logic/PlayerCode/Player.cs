@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +21,7 @@ namespace ServerSProxy.Logic.PlayerCode
         private bool _isInCombat;//cant be fight with two people at the same time
         private bool _isKillable;//is in chat
         private StreamWriter _writer;
+        private StreamReader _reader;
 
 
         //stats
@@ -51,7 +53,11 @@ namespace ServerSProxy.Logic.PlayerCode
 
 
         // properties
-
+        public StreamReader Reader
+        {
+            get { return _reader; }
+            set { _reader = value; }
+        }
 
         public StreamWriter Writer
         {
@@ -106,7 +112,7 @@ namespace ServerSProxy.Logic.PlayerCode
             set { _inventory = value; }
         }
 
-        public List<Quest> ActiveQuests
+         public List<Quest> ActiveQuests
         {
             get { return _activeQuests; }
             set { _activeQuests = value; }

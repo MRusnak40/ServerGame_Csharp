@@ -8,5 +8,7 @@ namespace ServerSProxy.Logic.Commands
 {
     internal class Command
     {
+
+
     }
 }
