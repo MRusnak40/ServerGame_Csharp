@@ -18,7 +18,7 @@ namespace ServerSProxy.Logic.ServersLogic
         }
         */
 
-        // Zpráva všem hráčům
+        // vsem hracum zprava
         public static  async Task BroadcastAll(string message, List<Player> _activePlayers)
         {
             foreach (Player player in _activePlayers)
@@ -27,13 +27,13 @@ namespace ServerSProxy.Logic.ServersLogic
             }
         }
 
-        // Zpráva jednomu hráči
+        // dany hrac zprava
         public static async Task TextToPlayer(Player player, string message)
         {
             await player.Writer.WriteLineAsync(message);
         }
 
-        //vzatí vstupu od hráče
+        //vrati od hrace
         public static async Task<string> TakeInput(Player player) { 
            
 

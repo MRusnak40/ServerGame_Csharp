@@ -59,11 +59,16 @@ namespace ServerSProxy
                     if (string.IsNullOrWhiteSpace(data))
                     {
                         //clientConnect = false;
+
+
                         continue;
                     }
 
                     data = data.ToLower();
                     Console.WriteLine($"Proxy prijala: {data}");
+
+
+
 
                     string response;
 

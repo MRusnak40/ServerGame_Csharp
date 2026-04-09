@@ -72,8 +72,8 @@ namespace ServerSProxy.Logic.GameWorldCode
             await File.WriteAllTextAsync(jsonFilePath, jsonData);
         }
 
-
-        public async Task HandlePlayers(StreamReader reader, StreamWriter writer)
+        //napojeni na connected pro hrace jinak ho to vyhodi
+        public async Task<bool> LogInPlayers(StreamReader reader, StreamWriter writer)
         {   
             Task loadTask=LoadPlayers();
 
@@ -84,6 +84,7 @@ namespace ServerSProxy.Logic.GameWorldCode
             player.Writer = writer;
 
             WriteToConsole.TextToPlayer(player, "\n Welcome to the game! Please enter your name:");
+
             string name = await WriteToConsole.TakeInput(player);
 
             WriteToConsole.TextToPlayer(player, "\n Please enter your password:");
@@ -92,7 +93,7 @@ namespace ServerSProxy.Logic.GameWorldCode
             if (await login.VerifyPassword(name, password))
             {
                 WriteToConsole.TextToPlayer(player, "\n Login successful! Welcome back, " + name + "!");
-                return;
+                return true;
             }
             else
             {
@@ -102,11 +103,11 @@ namespace ServerSProxy.Logic.GameWorldCode
                 if (response.ToLower() == "yes")
                 {
                     await login.CreateAcc(name, password);
-                    return;
+                    return true;
                 }
 
                 //odhlasit pokud nechce vytvorit ucet
-
+                return false;
             }
 
             await loadTask;

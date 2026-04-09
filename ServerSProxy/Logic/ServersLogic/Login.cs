@@ -112,7 +112,7 @@ namespace ServerSProxy.Logic.ServersLogic
            
             if (File.Exists(pathToJson))
             {
-                string jsonData = await File.ReadAllTextAsync(path);
+                string jsonData = await File.ReadAllTextAsync(pathToJson);
                 return System.Text.Json.JsonSerializer.Deserialize<List<Login>>(jsonData);
             }
             return new List<Login>(); // Vrátí prázdný seznam, pokud soubor neexistuje
