@@ -8,25 +8,21 @@ using System.Net.Sockets;
 
 namespace ServerSProxy
 {
-    public class TranslationProxy
+    public class ProxyListener
     {
         private TcpListener myProxy;
         private bool isRunning;
         private string targetIp;
         private int targetPort;
-        private Dictionary<string, string> cache;
+        //private Dictionary<string, string> cache;
 
-        public TranslationProxy(int proxyPort, string targetIp, int targetPort)
+        public ProxyListener(int proxyPort, string targetIp, int targetPort)
         {
             this.targetIp = targetIp;
             this.targetPort = targetPort;
-            //neni potreba catche
-            cache = new Dictionary<string, string>();
-
             myProxy = new TcpListener(IPAddress.Any, proxyPort);
             myProxy.Start();
             isRunning = true;
-
             ServerLoop();
         }
 
@@ -69,7 +65,7 @@ namespace ServerSProxy
 
 
 
-
+                    /*
                     string response;
 
                     if (data == "exit")
@@ -93,12 +89,13 @@ namespace ServerSProxy
                     }
 
                     await clientWriter.WriteLineAsync(response);
+                    */
                 }
             }
 
             Console.WriteLine("Klient se odpojil od proxy");
         }
-
+        /*
         private async Task<string> ForwardMessageToServer(string message)
         {
             using (TcpClient proxyToServer = new TcpClient())
@@ -117,5 +114,6 @@ namespace ServerSProxy
                 }
             }
         }
+        */
     }
 }
