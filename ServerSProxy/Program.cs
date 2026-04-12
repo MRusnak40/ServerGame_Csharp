@@ -6,7 +6,7 @@
         {
             try
             {                             
-                new TranslationServer(5000);
+                new GameServer(5000);
 
                 
                 new ProxyListener(4000, "127.0.0.1", 5000);

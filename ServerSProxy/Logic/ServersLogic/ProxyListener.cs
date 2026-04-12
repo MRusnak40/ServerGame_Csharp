@@ -1,119 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
-namespace ServerSProxy
+public class ProxyListener
 {
-    public class ProxyListener
+    private TcpListener myProxy;
+    private bool isRunning;
+    private string targetIp;
+    private int targetPort;
+
+    public ProxyListener(int proxyPort, string targetIp, int targetPort)
     {
-        private TcpListener myProxy;
-        private bool isRunning;
-        private string targetIp;
-        private int targetPort;
-        //private Dictionary<string, string> cache;
+        this.targetIp = targetIp;
+        this.targetPort = targetPort;
+        myProxy = new TcpListener(IPAddress.Any, proxyPort);
+        myProxy.Start();
+        isRunning = true;
+        ServerLoop();
+    }
 
-        public ProxyListener(int proxyPort, string targetIp, int targetPort)
+    private async void ServerLoop()
+    {
+        Console.WriteLine("Proxy byla spustena");
+        while (isRunning)
         {
-            this.targetIp = targetIp;
-            this.targetPort = targetPort;
-            myProxy = new TcpListener(IPAddress.Any, proxyPort);
-            myProxy.Start();
-            isRunning = true;
-            ServerLoop();
+            TcpClient client = await myProxy.AcceptTcpClientAsync();
+            _ = Task.Run(() => ClientLoop(client));
         }
+    }
 
-        private async void ServerLoop()
+    private async Task ClientLoop(TcpClient clientToProxy)
+    {
+        Console.WriteLine("Klient se pripojil na proxy");
+
+        TcpClient server = new TcpClient();
+        await server.ConnectAsync(targetIp, targetPort);
+
+        StreamReader odKlienta = new StreamReader(clientToProxy.GetStream(), Encoding.UTF8);
+        StreamWriter KeKlientovi = new StreamWriter(clientToProxy.GetStream(), Encoding.UTF8);
+        KeKlientovi.AutoFlush = true;
+
+        StreamReader odServeru = new StreamReader(server.GetStream(), Encoding.UTF8);
+        StreamWriter KeServeru = new StreamWriter(server.GetStream(), Encoding.UTF8);
+        KeServeru.AutoFlush = true;
+
+        // Cteme od klienta a posilame serveru
+        Task smer1 = Task.Run(async () =>
         {
-            Console.WriteLine("Proxy byla spustena");
-
-            while (isRunning)
+            string? zprava;
+            while ((zprava = await odKlienta.ReadLineAsync()) != null)
             {
-                TcpClient client = await myProxy.AcceptTcpClientAsync();
-                _ = Task.Run(() => ClientLoop(client));
+                Console.WriteLine($"Klient rekl: {zprava}");
+                await KeServeru.WriteLineAsync(zprava);
             }
-        }
+        });
 
-        private async Task ClientLoop(TcpClient clientToProxy)
+        // Cteme od serveru a posilame klientovi
+        Task smer2 = Task.Run(async () =>
         {
-            Console.WriteLine("Klient se pripojil na proxy");
-
-            using (clientToProxy)
-            using (StreamReader clientReader = new StreamReader(clientToProxy.GetStream(), Encoding.UTF8))
-            using (StreamWriter clientWriter = new StreamWriter(clientToProxy.GetStream(), Encoding.UTF8))
+            string? zprava;
+            while ((zprava = await odServeru.ReadLineAsync()) != null)
             {
-                clientWriter.AutoFlush = true;
-                bool clientConnect = true;
-
-                while (clientConnect)
-                {
-                    string? data = await clientReader.ReadLineAsync();
-
-                    if (string.IsNullOrWhiteSpace(data))
-                    {
-                        //clientConnect = false;
-
-
-                        continue;
-                    }
-
-                    data = data.ToLower();
-                    Console.WriteLine($"Proxy prijala: {data}");
-
-
-
-                    /*
-                    string response;
-
-                    if (data == "exit")
-                    {
-                        response = await ForwardMessageToServer(data);
-                        await clientWriter.WriteLineAsync(response);
-                        clientConnect = false;
-                        continue;
-                    }
-
-                    if (cache.ContainsKey(data))
-                    {
-                        response = cache[data];
-                        Console.WriteLine("Proxy vratila odpoved z cache");
-                    }
-                    else
-                    {
-                        response = await ForwardMessageToServer(data);
-                        cache[data] = response;
-                        Console.WriteLine("Proxy ulozila odpoved do cache");
-                    }
-
-                    await clientWriter.WriteLineAsync(response);
-                    */
-                }
+                Console.WriteLine($"Server rekl: {zprava}");
+                await KeKlientovi.WriteLineAsync(zprava);
             }
+        });
 
-            Console.WriteLine("Klient se odpojil od proxy");
-        }
-        /*
-        private async Task<string> ForwardMessageToServer(string message)
-        {
-            using (TcpClient proxyToServer = new TcpClient())
-            {
-                await proxyToServer.ConnectAsync(targetIp, targetPort);
+        // Cekame dokud se nekdo neodpoji
+        await Task.WhenAny(smer1, smer2);
 
-                using (StreamReader serverReader = new StreamReader(proxyToServer.GetStream(), Encoding.UTF8))
-                using (StreamWriter serverWriter = new StreamWriter(proxyToServer.GetStream(), Encoding.UTF8))
-                {
-                    serverWriter.AutoFlush = true;
-
-                    await serverWriter.WriteLineAsync(message);
-                    string? response = await serverReader.ReadLineAsync();
-
-                    return response ?? "Server neodpovedel";
-                }
-            }
-        }
-        */
+        Console.WriteLine("Klient se odpojil od proxy");
     }
 }

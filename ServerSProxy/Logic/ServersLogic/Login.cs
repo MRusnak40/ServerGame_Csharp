@@ -9,13 +9,22 @@ namespace ServerSProxy.Logic.ServersLogic
 {
     internal class Login
     {
-        public Login() { }
+        
 
-        //List<Login> _logins = new List<Login>() {};
+        List<Login> list = new();
+        public Login() { 
+         
+        }
 
         private string _username;
         private string _password;
-        private string pathToJson;
+        private string pathToJson = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "JSON", "Accounts.json");
+
+
+        //dovoluje await uvnitr locku
+        private static SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+
+
 
 
         public string HashPassword(string password)
@@ -33,9 +42,10 @@ namespace ServerSProxy.Logic.ServersLogic
             }
         }
 
-        public async Task<bool> VerifyPassword(string userName,string password )
+        public async Task<bool> VerifyPassword(string userName, string password)
         {
             List<Login> list = new();
+
             list = await LoadLogins(); // Načte loginy z JSON souboru
 
 
@@ -56,40 +66,37 @@ namespace ServerSProxy.Logic.ServersLogic
 
 
         //createing acc
-        public async Task<string> CreateAcc(string userName,string password)
+        public async Task<string> CreateAcc(string userName, string password)
         {
-            //vytvorit player bude pred metodou
-            List<Login> list = new();
-            list = await LoadLogins(); // Načte loginy z JSON souboru
-
-
-            foreach (Login login in list)
+            await _lock.WaitAsync();
+            try
             {
-                if (login.Username == userName)
+                list = await LoadLogins();
+
+                foreach (Login login in list)
                 {
-                    string hashedInput = HashPassword(password);
-                    bool isGood = login.Password == hashedInput;
-
-                    if (isGood)
+                    if (login.Username == userName)
                     {
-                        Console.WriteLine($"uzivatel s {userName} a s heslem {HashPassword(password)} zadal spravne heslo presmerovani na prihlaseni");
-                        return "Tento účet již existuje, přihlaš se";
-                    }
-                    else
-                    {
-                        Console.WriteLine($"uzivatel s {userName} a s heslem {HashPassword(password)} se znasi vytvorit acc" );
-                        return "Prezdivka je jiz zabrana";
+                        string hashedInput = HashPassword(password);
+                        bool isGood = login.Password == hashedInput;
 
+                        if (isGood)
+                            return "Tento účet již existuje, přihlaš se";
+                        else
+                            return "Prezdivka je jiz zabrana";
                     }
                 }
+
+                list.Add(new Login(userName, password));
+                await SaveLogins(list);
+
+                return "ok";
             }
-
-
-            return "ok"; 
-
-
+            finally
+            {
+                _lock.Release();
+            }
         }
-
 
 
 
@@ -102,14 +109,14 @@ namespace ServerSProxy.Logic.ServersLogic
         //file working
         public async Task SaveLogins(List<Login> logins)
         {
-          
+
             string jsonData = System.Text.Json.JsonSerializer.Serialize(logins);
             await File.WriteAllTextAsync(pathToJson, jsonData);
         }
 
         public async Task<List<Login>> LoadLogins()
         {
-           
+
             if (File.Exists(pathToJson))
             {
                 string jsonData = await File.ReadAllTextAsync(pathToJson);

@@ -22,7 +22,7 @@ namespace ServerSProxy.Logic.PlayerCode
         private bool _isKillable;//is in chat
         private StreamWriter _writer;
         private StreamReader _reader;
-
+        public DateTime LastActive { get; set; } = DateTime.Now;
 
         //stats
         private int _experience;

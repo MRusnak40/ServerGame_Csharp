@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ServerSProxy.Logic.GameWorldCode
 {
@@ -17,7 +18,12 @@ namespace ServerSProxy.Logic.GameWorldCode
 
         private List<Player> _onlinePlayers;
         Login login = new Login();
+
+
         private string pathToJsonPlayerList = "";
+        private string pathToJsonGameWorld = "";
+
+
         private List<Player> _accounts;
 
 
@@ -67,32 +73,70 @@ namespace ServerSProxy.Logic.GameWorldCode
         public async Task SaveGameWorld()
         {
             // Implementace ukládání světa do JSON souboru
-            string jsonFilePath = "gameWorld.json"; // Cesta k JSON souboru
+            // Cesta k JSON souboru
             string jsonData = System.Text.Json.JsonSerializer.Serialize(this);
-            await File.WriteAllTextAsync(jsonFilePath, jsonData);
+            await File.WriteAllTextAsync(pathToJsonGameWorld, jsonData);
         }
 
+        public async Task SetVluesForPlayer(Player player)
+        {
+            foreach (Player p in Accounts)
+            {
+                if (p.Name == player.Name)
+                {
+                    player.Level = p.Level;
+                    player.Experience = p.Experience;
+                    player.Health = p.Health;
+                    player.MaxHealth = p.MaxHealth;
+                    player.Shield = p.Shield;
+                    player.MaxShield = p.MaxShield;
+                    player.Stamina = p.Stamina;
+                    player.MaxStamina = p.MaxStamina;
+                    player.Strength = p.Strength;
+                    player.AttackSpeed = p.AttackSpeed;
+                    player.Coins = p.Coins;
+                    player.Class = p.Class;
+                    player.Inventory = p.Inventory;
+                    player.ActiveQuests = p.ActiveQuests;
+                    player.IsAlive = p.IsAlive;
+                    player.LastActive = p.LastActive;
+                    break;
+                }
+            }
+        }
+
+
         //napojeni na connected pro hrace jinak ho to vyhodi
-        public async Task<bool> LogInPlayers(StreamReader reader, StreamWriter writer)
-        {   
-            Task loadTask=LoadPlayers();
+        public async Task<bool> LogInPlayers(StreamReader reader, StreamWriter writer,Player player)
+        {
+            Task loadTask = LoadPlayers();
 
 
-            Player player = new Player();
+            
 
             player.Reader = reader;
             player.Writer = writer;
 
-            WriteToConsole.TextToPlayer(player, "\n Welcome to the game! Please enter your name:");
+            WriteToConsole.TextToPlayer(player, "\n Welcome back to the game! Please enter your game name:");
 
             string name = await WriteToConsole.TakeInput(player);
 
-            WriteToConsole.TextToPlayer(player, "\n Please enter your password:");
+            WriteToConsole.TextToPlayer(player, "*-----------------------------* \n Please enter your login password:");
             string password = await WriteToConsole.TakeInput(player);
 
             if (await login.VerifyPassword(name, password))
             {
-                WriteToConsole.TextToPlayer(player, "\n Login successful! Welcome back, " + name + "!");
+                WriteToConsole.TextToPlayer(player, "*----------------------------------*\n Login successful! Welcome back,"+ name +" ! \n *---------------------------------------------* " );
+
+                player.Name = name;
+
+
+                await loadTask;
+
+
+               await SetVluesForPlayer(player);
+
+
                 return true;
             }
             else
@@ -102,7 +146,25 @@ namespace ServerSProxy.Logic.GameWorldCode
 
                 if (response.ToLower() == "yes")
                 {
-                    await login.CreateAcc(name, password);
+                    bool? correct = false;
+
+
+                    while (correct == false)
+                    {
+                        string accIn = await login.CreateAcc(name, password);
+
+                        await WriteToConsole.TextToPlayer(player, accIn);
+
+                        if (accIn == "ok")
+                        {
+                            await WriteToConsole.TextToPlayer(player, "SUSCESSFULLY REGISTERED IN");
+                            correct = true;
+
+                            player.Name = name;
+                            
+                        }
+                    }
+                    await loadTask;
                     return true;
                 }
 
@@ -110,17 +172,13 @@ namespace ServerSProxy.Logic.GameWorldCode
                 return false;
             }
 
-            await loadTask;
-
-
-
-
-
-            //tato metoda bude vracet hrace ktereho najdu podle jmena 
 
 
 
         }
+
+
+
 
 
 
@@ -133,6 +191,16 @@ namespace ServerSProxy.Logic.GameWorldCode
                 Accounts = System.Text.Json.JsonSerializer.Deserialize<List<Player>>(jsonData);
 
             }
+
+
+        }
+
+
+        public async Task GameLoop(Player player)
+        {
+
+
+
 
 
         }
