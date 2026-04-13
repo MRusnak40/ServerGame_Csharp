@@ -17,7 +17,7 @@ namespace ServerSProxy
         private TcpListener myServer;
         private bool isRunning;
 
-        gameWorld world = new();
+        GameWorld world = new();
 
 
         private static SemaphoreSlim _playersLock = new SemaphoreSlim(1, 1);
@@ -27,7 +27,8 @@ namespace ServerSProxy
             myServer.Start();
             isRunning = true;
 
-
+            //auto save player
+            _ = world.StartAutoSave();
             ServerLoop();
         }
 
@@ -44,6 +45,7 @@ namespace ServerSProxy
 
 
         //hracsky loop
+        //postarat se o mrtve loopy
         private async Task ClientLoop(TcpClient client)
         {
 
@@ -51,6 +53,7 @@ namespace ServerSProxy
 
             bool isFirstLogin = false;
 
+            //zde se vytvari novy hrac pro klienta
             Player player = new Player();
 
             using (client)
@@ -62,11 +65,16 @@ namespace ServerSProxy
                 writer.AutoFlush = true;
 
 
-                //zde se vytvari novy hrac pro klienta
+
 
 
                 //prihlaseni a nastavni jmena hrace, pokud se nepodari prihlasit, klient se odpoji
+
+
                 bool clientConnect = await world.LogInPlayers(reader, writer, player);
+
+
+
 
                 if (!clientConnect)
                 {
@@ -75,7 +83,7 @@ namespace ServerSProxy
                 }
 
 
-                WriteToConsole.BroadcastAll($"■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■ \n ----\n Hrac {player.Name} se pripojil na server \n ----\n ■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■ ", world.OnlinePlayers);
+
 
 
 
@@ -90,23 +98,45 @@ namespace ServerSProxy
                     _playersLock.Release();
                 }
 
+                WriteToConsole.BroadcastAll($"■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■ \n ----\n Hrac {player.Name} se pripojil na server \n ----\n ■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■ ", world.OnlinePlayers);
 
 
 
                 isFirstLogin = true;
 
+                WriteToConsole.TextToPlayer(player, "\n You are now in the game world. Type 'help' for a list of commands.");
+
+
+                _ = world.PlayerAutoSave(player);
+
                 while (clientConnect)
                 {
 
                     //main loop betwwen player and game world 
-                    player.LastActive = DateTime.Now;
+
                     await world.GameLoop(player);
 
+
+                    WriteToConsole.TextToPlayer(player, "☠︎---☠︎---☠︎---☠︎---☠︎---☠︎---☠︎---☠_☠---☠︎---☠︎---☠︎---☠︎---☠︎ \n Back in LOBBY wanna join AGAIN? yes/no");
+
+                    string? answer = await WriteToConsole.TakeInput(player);
+
+                    if (answer.ToLower() == "yes")
+                    {
+
+
+
+                        continue;
+                    }
+
+                    clientConnect = false;
 
 
                 }
 
             }
+
+
             //doebirat neco z listu co tam nebylo by to hodilo chybu
 
 

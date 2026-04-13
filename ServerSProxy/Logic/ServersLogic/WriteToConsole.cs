@@ -33,10 +33,15 @@ namespace ServerSProxy.Logic.ServersLogic
             await player.Writer.WriteLineAsync(message);
         }
 
+        public static async Task TextToPlayerOneLine(Player player, string message)
+        {
+            await player.Writer.WriteAsync(message);
+        }
+
         //vrati od hrace
         public static async Task<string> TakeInput(Player player) { 
            
-
+            await player.Writer.WriteAsync("Command: ");
             string input = await player.Reader.ReadLineAsync();
             return input ?? "";
 

@@ -18,3 +18,7 @@ nezapomen zkontrolovat zpravnost cesty
 
 
 Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "JSON", "Accounts.json")  cesta k souborum pro ukladani a nacitani dat
+
+
+
+ohlidat pri nacitani login ale odpojil se a nestlihl se mu vytovrit player tak ho odpojit

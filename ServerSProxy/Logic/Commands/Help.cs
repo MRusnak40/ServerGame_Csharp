@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServerSProxy.Logic.Commands
 {
-    internal class Exit
+    internal class Help
     {
     }
 }

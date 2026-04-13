@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerSProxy.Logic.PlayerCode.Items;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,8 +33,23 @@ namespace ServerSProxy.Logic.NPCs
         private int _attackSpeed;
         private int _strength;
 
+        private List<Item>? _droppingItems;
 
 
+
+
+
+
+
+
+
+
+        // properties
+        public List<Item>? DroppingItems
+        {
+            get { return _droppingItems; }
+            set { _droppingItems = value; }
+        }
         public string Name
         {
             get { return _name; }
