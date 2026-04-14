@@ -22,7 +22,7 @@ namespace ServerSProxy.Logic.Commands
             _gameWorld = gameWorld;
         }
 
-        public abstract Task<string> Execute(string input);
+        public abstract Task<string> Execute();
         public abstract bool Exit();
 
     }

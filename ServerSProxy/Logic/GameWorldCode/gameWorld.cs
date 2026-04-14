@@ -308,7 +308,8 @@ namespace ServerSProxy.Logic.GameWorldCode
 
 
 
-                WriteToConsole.TextToPlayer(player, "\n Incorrect name or password. Do you want to create a new account? (yes/no)");
+                WriteToConsole.TextToPlayer(player, "\n Incorrect name or password for LOGIN. Do you want to create a account? (yes/no)");
+
                 string response = await WriteToConsole.TakeInput(player);
 
                 if (response.ToLower() == "yes")
@@ -325,6 +326,22 @@ namespace ServerSProxy.Logic.GameWorldCode
 
                     while (!correct)
                     {
+                        await WriteToConsole.TextToPlayer(player, $"Do you want to change your name from {name} ? (yes/no)");
+
+                        string change = await WriteToConsole.TakeInput(player);
+
+
+                        if (change.ToLower() == "yes") {
+
+
+                            WriteToConsole.TextToPlayer(player, $"Zadej jine jmeno:");
+
+                            name = await WriteToConsole.TakeInput(player);
+
+                            await WriteToConsole.TextToPlayer(player, "Zadej heslo:");
+                            password = await WriteToConsole.TakeInput(player);
+
+                        }
 
 
 
@@ -340,7 +357,7 @@ namespace ServerSProxy.Logic.GameWorldCode
                         {
 
 
-                            await WriteToConsole.TextToPlayer(player, "SUSCESSFULLY REGISTERED IN");
+                            await WriteToConsole.TextToPlayer(player, $"SUSCESSFULLY REGISTERED IN {name}");
 
 
 
@@ -375,14 +392,14 @@ namespace ServerSProxy.Logic.GameWorldCode
                             return true;
 
                         }
-
+                        /*
                         WriteToConsole.TextToPlayer(player, $"Zkus jinou nez {name}");
 
                         name = await WriteToConsole.TakeInput(player);
 
                         await WriteToConsole.TextToPlayer(player, "Zadej heslo:");
                         password = await WriteToConsole.TakeInput(player);
-
+                        */
                     }
 
 
@@ -449,7 +466,22 @@ namespace ServerSProxy.Logic.GameWorldCode
 
                 player.LastActive = DateTime.Now;
 
+
+
                 input = await WriteToConsole.TakeInput(player);
+
+                string commandKey = input.Split(' ')[0].ToLower();
+
+
+
+                if (commands.ContainsKey(commandKey))
+                {
+                    await commands[commandKey].Execute();
+                }
+                else
+                {
+                    WriteToConsole.TextToPlayer(player, "Unknown command. Please try again.");
+                }
 
 
 

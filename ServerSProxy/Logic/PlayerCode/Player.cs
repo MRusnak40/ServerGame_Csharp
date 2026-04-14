@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace ServerSProxy.Logic.PlayerCode
@@ -20,7 +21,11 @@ namespace ServerSProxy.Logic.PlayerCode
         private bool _isAlive; //is alive or not, if not, cant do anything, but can be revived
         private bool _isInCombat;//cant be fight with two people at the same time
         private bool _isKillable;//is in chat
+
+        [JsonIgnore]
         private StreamWriter _writer;
+
+        [JsonIgnore]
         private StreamReader _reader;
         public DateTime LastActive { get; set; } = DateTime.Now;
 
@@ -53,12 +58,14 @@ namespace ServerSProxy.Logic.PlayerCode
 
 
         // properties
+
+        [JsonIgnore]
         public StreamReader Reader
         {
             get { return _reader; }
             set { _reader = value; }
         }
-
+        [JsonIgnore]
         public StreamWriter Writer
         {
             get { return _writer; }

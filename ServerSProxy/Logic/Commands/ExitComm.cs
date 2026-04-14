@@ -15,7 +15,7 @@ namespace ServerSProxy.Logic.Commands
         {
         }
 
-        public override async Task<string> Execute(string input)
+        public override async Task<string> Execute()
         {
             _player.IsAlive = false;
 
