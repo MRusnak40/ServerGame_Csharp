@@ -1,4 +1,4 @@
-npc bude mit  list ukolu a pokud budes chtit si od nej nejaky vzit dostanes nejaky random a zkopiruje se ti do tveho lsitu aktivnich 
+﻿npc bude mit  list ukolu a pokud budes chtit si od nej nejaky vzit dostanes nejaky random a zkopiruje se ti do tveho lsitu aktivnich 
 
 
 Enemy muze byt stejny jako player a bude mit stejne vlastnosti 
@@ -22,3 +22,23 @@ Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "JSON", "A
 
 
 ohlidat pri nacitani login ale odpojil se a nestlihl se mu vytovrit player tak ho odpojit
+
+
+
+ // WARRIOR - vyvážená třída, dobrý základ ve všem
+            // ↑ zdraví (střední-vyšší), ↑ štít (střední), ↑ stamina (střední)
+            // ↑ síla (střední), ↑ rychlost útoku (střední)
+
+            // BERSERKER - skleněné dělo, útočí rychle a silně ale umírá rychle
+            // ↑↑ síla (nejvyšší), ↑↑ rychlost útoku (nejvyšší), ↑↑ stamina (vysoká)
+            // ↓↓ štít (téměř žádný), ↓ zdraví (nízké)
+
+            // MAGE - největší damage ale extrémně křehký
+            // ↑↑↑ síla (absolutně nejvyšší)
+            // ↓↓↓ zdraví (nejnižší), ↓↓ štít (nízký), ↓ stamina (střední)
+            // ↓ rychlost útoku (pomalý, ale každý úder bolí)
+
+            // ARMORER - živá zeď, téměř nezničitelný ale slabý útočník
+            // ↑↑↑ zdraví (nejvyšší), ↑↑↑ štít (absolutně nejvyšší)
+            // ↓↓ síla (nejnižší), ↓↓↓ rychlost útoku (nejpomalejší)
+            // ↓ stamina (nízká)

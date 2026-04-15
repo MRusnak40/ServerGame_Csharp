@@ -39,9 +39,14 @@ namespace ServerSProxy.Logic.ServersLogic
         }
 
         //vrati od hrace
-        public static async Task<string> TakeInput(Player player) { 
-           
-            await player.Writer.WriteAsync("Command: ");
+        public static async Task<string> TakeInput(Player player) {
+
+            // await player.Writer.WriteAsync("Command: ");
+            /*
+            await player.Writer.WriteAsync("\n ❯ ");
+            await player.Writer.FlushAsync(); 
+            */
+
             string input = await player.Reader.ReadLineAsync();
             return input ?? "";
 

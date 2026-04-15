@@ -21,6 +21,6 @@ namespace ServerSProxy.Logic.Commands
         {
             throw new NotImplementedException();
         }
-    {
+    
     }
 }

@@ -1,3 +1,42 @@
 [
- 
+  {
+    "ClassId": "warrior",
+    "DisplayName": "--- WARRIOR ---",
+    "Description": "Good all-rounder",
+    "BaseHealth": 100,
+    "BaseShield": 50,
+    "BaseStamina": 100,
+    "BaseStrength": 15,
+    "BaseAttackSpeed": 10
+  },
+  {
+    "ClassId": "berserker",
+    "DisplayName": "--- BERSERKER ---",
+    "Description": "Overpowerd with low hp",
+    "BaseHealth": 70,
+    "BaseShield": 5,
+    "BaseStamina": 150,
+    "BaseStrength": 35,
+    "BaseAttackSpeed": 20
+  },
+  {
+    "ClassId": "mage",
+    "DisplayName": "--- MAGE ---",
+    "Description": "High damage but low hp",
+    "BaseHealth": 40,
+    "BaseShield": 15,
+    "BaseStamina": 80,
+    "BaseStrength": 55,
+    "BaseAttackSpeed": 5
+  },
+  {
+    "ClassId": "armorer",
+    "DisplayName": "--- ARMORER ---",
+    "Description": "Tank but slow attacker  ",
+    "BaseHealth": 180,
+    "BaseShield": 120,
+    "BaseStamina": 60,
+    "BaseStrength": 8,
+    "BaseAttackSpeed": 3
+  }
 ]

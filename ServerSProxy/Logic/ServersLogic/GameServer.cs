@@ -18,6 +18,7 @@ namespace ServerSProxy
         private bool isRunning;
 
         GameWorld world = new();
+        ClassTypeListPlayer classTypeLiekEnum = new ClassTypeListPlayer();
 
 
         private static SemaphoreSlim _playersLock = new SemaphoreSlim(1, 1);
@@ -29,6 +30,11 @@ namespace ServerSProxy
 
             //auto save player
             _ = world.StartAutoSave();
+            //load class types
+            _ = classTypeLiekEnum.LoadFromFile();
+
+
+
             ServerLoop();
         }
 
@@ -56,104 +62,129 @@ namespace ServerSProxy
             //zde se vytvari novy hrac pro klienta
             Player player = new Player();
 
-            using (client)
-            using (StreamReader reader = new StreamReader(client.GetStream(), Encoding.UTF8))
-            using (StreamWriter writer = new StreamWriter(client.GetStream(), Encoding.UTF8))
+            using var cts = new CancellationTokenSource();
+            try
             {
-
-
-                writer.AutoFlush = true;
-
-
-
-
-
-                //prihlaseni a nastavni jmena hrace, pokud se nepodari prihlasit, klient se odpoji
-
-
-                bool clientConnect = await world.LogInPlayers(reader, writer, player);
-
-
-
-
-                if (!clientConnect)
-                {
-                    Console.WriteLine("Klient se nepodarilo prihlasit");
-                    return;
-                }
-
-
-
-
-
-
-
-                await _playersLock.WaitAsync();
-                try
-                {
-                    world.OnlinePlayers.Add(player);
-                }
-                finally
-                {
-                    _playersLock.Release();
-                }
-
-                WriteToConsole.BroadcastAll($"■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■ \n ----\n Hrac {player.Name} se pripojil na server \n ----\n ■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■ ", world.OnlinePlayers);
-
-
-
-                isFirstLogin = true;
-
-                WriteToConsole.TextToPlayer(player, "\n You are now in the game world. Type 'help' for a list of commands.");
-
-
-                _ = world.PlayerAutoSave(player);
-
-                while (clientConnect)
+                using (client)
+                using (StreamReader reader = new StreamReader(client.GetStream(), Encoding.UTF8))
+                using (StreamWriter writer = new StreamWriter(client.GetStream(), Encoding.UTF8))
                 {
 
-                    //main loop betwwen player and game world 
 
-                    await world.GameLoop(player);
+                    writer.AutoFlush = true;
 
 
-                    WriteToConsole.TextToPlayer(player, "☠︎---☠︎---☠︎---☠︎---☠︎---☠︎---☠︎---☠_☠---☠︎---☠︎---☠︎---☠︎---☠︎ \n Back in LOBBY wanna join AGAIN? yes/no");
 
-                    string? answer = await WriteToConsole.TakeInput(player);
 
-                    if (answer.ToLower() == "yes")
+
+                    //prihlaseni a nastavni jmena hrace, pokud se nepodari prihlasit, klient se odpoji
+
+
+                    bool clientConnect = await world.LogInPlayers(reader, writer, player);
+
+
+
+
+                    if (!clientConnect)
                     {
-
-
-
-                        continue;
+                        Console.WriteLine("Klient se nepodarilo prihlasit");
+                        return;
                     }
 
-                    clientConnect = false;
 
+
+
+
+
+
+                    await _playersLock.WaitAsync();
+
+                    try
+                    {
+                        world.OnlinePlayers.Add(player);
+                    }
+                    finally
+                    {
+                        _playersLock.Release();
+                    }
+
+                    WriteToConsole.BroadcastAll($"■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■ \n ----\n Hrac {player.Name} se pripojil na server \n ----\n ■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■□■ ", world.OnlinePlayers);
+
+
+
+                    isFirstLogin = true;
+
+                    WriteToConsole.TextToPlayer(player, "\n You are now in the game world. Type 'help' for a list of commands.");
+
+
+                    _ = world.PlayerAutoSave(player, cts.Token);
+
+
+
+                    //wait classTypeLiekEnum.LoadFromFile();
+
+
+
+
+
+                    while (clientConnect)
+                    {
+
+                        //main loop betwwen player and game world 
+
+                        await world.GameLoop(player);
+
+
+                        WriteToConsole.TextToPlayer(player, "☠︎---☠︎---☠︎---☠︎---☠︎---☠︎---☠︎---☠_☠---☠︎---☠︎---☠︎---☠︎---☠︎ \n Back in LOBBY wanna join AGAIN? yes/no");
+
+                        string? answer = await WriteToConsole.TakeInput(player);
+
+                        if (answer.ToLower() == "yes")
+                        {
+
+
+
+                            continue;
+                        }
+
+                        clientConnect = false;
+
+
+                    }
 
                 }
 
-            }
+
+                //doebirat neco z listu co tam nebylo by to hodilo chybu
 
 
-            //doebirat neco z listu co tam nebylo by to hodilo chybu
 
-
-            if (player.Name != null && isFirstLogin)
+            }catch (Exception ex)
             {
-                await _playersLock.WaitAsync();
-                try
-                {
-                    world.OnlinePlayers.Remove(player);
-                }
-                finally
-                {
-                    _playersLock.Release();
-                }
+                Console.WriteLine($"Chyba v komunikaci s {player.Name}  : {ex.Message}");
             }
 
-            Console.WriteLine("Klient se odpojil od serveru");
+
+            finally
+            {
+
+                cts.Cancel();
+                if (player.Name != null && isFirstLogin)
+                {
+                    await _playersLock.WaitAsync();
+                    try
+                    {
+                        world.OnlinePlayers.Remove(player);
+                    }
+                    finally
+                    {
+                        _playersLock.Release();
+                    }
+
+                }
+
+                Console.WriteLine($"Klient {player.Name} se odpojil od serveru");
+            }
         }
     }
 }

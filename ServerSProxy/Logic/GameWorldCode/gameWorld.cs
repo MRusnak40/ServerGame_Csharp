@@ -1,5 +1,6 @@
 ﻿using ServerSProxy.Logic.Commands;
 using ServerSProxy.Logic.PlayerCode;
+using ServerSProxy.Logic.PlayerCode.Items;
 using ServerSProxy.Logic.ServersLogic;
 using System;
 using System.Collections.Generic;
@@ -159,25 +160,30 @@ namespace ServerSProxy.Logic.GameWorldCode
             }
         }
 
-        public async Task PlayerAutoSave(Player player)
+        public async Task PlayerAutoSave(Player player, CancellationToken token)
         {
             using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
 
-            // Smyčka běží navždy na pozadí
-            while (await timer.WaitForNextTickAsync())
+            try
             {
-                try
+               
+                while (!token.IsCancellationRequested && await timer.WaitForNextTickAsync(token))
                 {
-                    await UpadateVluesForPlayerTOList(player);
-                    Console.WriteLine($"[AUTOSAVE] {DateTime.Now:HH:mm:ss} - Data uložena.");
-
-
-                    
+                    try
+                    {
+                        await UpadateVluesForPlayerTOList(player);
+                        Console.WriteLine($"[AUTOSAVE-{player.Name}] {DateTime.Now:HH:mm:ss} - Data uložena.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[CHYBA] Autosave selhal: {ex.Message}");
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[CHYBA] Autosave selhal: {ex.Message}");
-                }
+            }
+            catch (OperationCanceledException)
+            {
+            
+                Console.WriteLine($"[SYSTEM] Autosave pro hráče {player.Name} byl korektně ukončen.");
             }
         }
 
@@ -331,7 +337,8 @@ namespace ServerSProxy.Logic.GameWorldCode
                         string change = await WriteToConsole.TakeInput(player);
 
 
-                        if (change.ToLower() == "yes") {
+                        if (change.ToLower() == "yes")
+                        {
 
 
                             WriteToConsole.TextToPlayer(player, $"Zadej jine jmeno:");
@@ -357,7 +364,7 @@ namespace ServerSProxy.Logic.GameWorldCode
                         {
 
 
-                            await WriteToConsole.TextToPlayer(player, $"SUSCESSFULLY REGISTERED IN {name}");
+
 
 
 
@@ -366,7 +373,7 @@ namespace ServerSProxy.Logic.GameWorldCode
                             //PRIDAT SEM EFAULTNI HODNOTY NEBO POMOCI METODY VYBRAT CLASS KTEROU BUDE
                             //ulozit do seznamu muze nastat chybe ze hrac se odpoji driv nez se ulozi do seznamu i hrac v tom pripade udelat moznost odstrannei uctu pokud zna jmeno i heslo
 
-
+                            /*
                             player.Name = name;
                             player.Health = 100;
                             player.MaxHealth = 100;
@@ -378,6 +385,16 @@ namespace ServerSProxy.Logic.GameWorldCode
                             player.AttackSpeed = 10;
                             player.IsAlive = true;
                             player.Coins = 0;
+                            */
+                            player.Name = name;
+
+                            await ChooseClassForPlayer(player);
+
+
+
+
+                            await WriteToConsole.TextToPlayer(player, $"SUSCESSFULLY REGISTERED IN {name}");
+
 
 
 
@@ -434,10 +451,116 @@ namespace ServerSProxy.Logic.GameWorldCode
 
 
         }
+        private async Task<bool> CheckIfPlayerIsConnected(Player player)
+        {
+            try
+            {
+                await player.Writer.WriteLineAsync("ping");
+                await player.Writer.FlushAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
+        public async Task RemoveDisconnectedPlayer(Player player)
+        {
+            if (!await CheckIfPlayerIsConnected(player))
+            {
+                OnlinePlayers.Remove(player);
+                WriteToConsole.TextToPlayer(player, "You have been disconnected from the server.");
+            }
+        }
+
+
+        public async Task ChooseClassForPlayer(Player player)
+        {
+
+
+            bool validSelection = false;
+
+
+            if (ClassTypeListPlayer.AvailableClasses.Count == 0)
+            {
+                Console.WriteLine("No classes available. Please add classes to the ClassTypeListPlayer.AvailableClasses list.");
+                WriteToConsole.TextToPlayer(player, "Bro cant cook even easy code. Please contact the administrator .");
+                return;
+            }
+            while (!validSelection)
+            {
+
+                StringBuilder menu = new StringBuilder();
+                menu.AppendLine("\n╔════════════════════════════════════════════════════════════╗");
+                menu.AppendLine("║                ✨ Choose the class ✨                      ║");
+                menu.AppendLine("╚════════════════════════════════════════════════════════════╝");
+                menu.AppendLine("  Available classes:");
+                menu.AppendLine("  ------------------------------------------------------------");
+
+                foreach (var cls in ClassTypeListPlayer.AvailableClasses.Values)
+                {
+                    menu.AppendLine($"  ▶ [{cls.ClassId.ToUpper()}] {cls.DisplayName}");
+                    menu.AppendLine($"    \"{cls.Description}\"");
+                    menu.AppendLine($"    💪 Strength: {cls.BaseStrength} | ❤️ HP: {cls.BaseHealth} | 🛡️ Shields: {cls.BaseShield} | ⚡ Stamina: {cls.BaseStamina} | ⏱️ Attack Speed: {cls.BaseAttackSpeed}");
+                    menu.AppendLine("  ------------------------------------------------------------");
+                }
+
+                menu.AppendLine("\n  Type the ID of the class you want to choose:");
+
+                await WriteToConsole.TextToPlayer(player, menu.ToString());
+
+
+                string choice = await WriteToConsole.TakeInput(player);
+                choice = choice?.Trim().ToLower();
+
+
+                if (!string.IsNullOrEmpty(choice) && ClassTypeListPlayer.AvailableClasses.TryGetValue(choice, out var template))
+                {
 
 
 
 
+
+                    player.IsAlive = true;
+                    player.Coins = 0;
+                    player.Level = 1;
+                    player.IsInCombat = false;
+                    player.Experience = 0;
+
+                    player.Inventory = new Inventory(new List<Item>(), new List<Item>(),5);
+
+                    player.ActiveQuests = new List<Quest>();
+
+                    player.IsKillable = true;
+
+                    player.Class = template.DisplayName;
+                    player.MaxHealth = template.BaseHealth;
+                    player.Health = template.BaseHealth;
+                    player.MaxShield = template.BaseShield;
+                    player.Shield = template.BaseShield;
+                    player.MaxStamina = template.BaseStamina;
+                    player.Stamina = template.BaseStamina;
+                    player.Strength = template.BaseStrength;
+                    player.AttackSpeed = template.BaseAttackSpeed;
+
+
+
+                    string confirmMsg = $"\n✨ Nice choice! From now on, you are: {template.DisplayName} ✨\n";
+                    await WriteToConsole.TextToPlayer(player, confirmMsg);
+
+                    validSelection = true;
+                }
+                else
+                {
+                    await WriteToConsole.TextToPlayer(player, "\n❌ Invalid choice! Please try again and enter the class ID correctly.");
+                }
+
+
+
+            }
+        }
 
         public async Task GameLoop(Player player)
         {
@@ -448,10 +571,12 @@ namespace ServerSProxy.Logic.GameWorldCode
 
             var commands = CreateCommands(player);
 
-            
+
+
 
             while (gameRunning)
             {
+                player.LastActive = DateTime.Now;
                 if (!player.IsAlive)
                 {
                     WriteToConsole.TextToPlayer(player, "You are dead. Please wait for retturning to lobby...");
@@ -464,7 +589,13 @@ namespace ServerSProxy.Logic.GameWorldCode
                     return;
                 }
 
-                player.LastActive = DateTime.Now;
+
+                if (player.Health <= 0)
+                {
+                    player.IsAlive = false;
+                }
+
+
 
 
 
