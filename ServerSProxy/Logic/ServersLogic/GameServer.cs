@@ -70,6 +70,9 @@ namespace ServerSProxy
                 using (StreamWriter writer = new StreamWriter(client.GetStream(), Encoding.UTF8))
                 {
 
+                    player.Reader = reader;
+                    player.Writer = writer;
+
 
                     writer.AutoFlush = true;
 
