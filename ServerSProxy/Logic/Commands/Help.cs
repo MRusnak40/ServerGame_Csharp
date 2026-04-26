@@ -1,27 +1,34 @@
 ﻿using ServerSProxy.Logic.GameWorldCode;
 using ServerSProxy.Logic.PlayerCode;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using ServerSProxy.Logic.ServersLogic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerSProxy.Logic.Commands
 {
     internal class Help : Command
     {
-        public Help(Player player, GameWorld gameWorld) : base(player, gameWorld)
+        public Help(Player player, GameWorld gameWorld) : base(player, gameWorld) { }
+
+        public override async Task<string> Execute()
         {
+            var sb = new StringBuilder();
+            sb.AppendLine("═══════════════════════════════════════");
+            sb.AppendLine("           AVAILABLE COMMANDS");
+            sb.AppendLine("═══════════════════════════════════════");
+            sb.AppendLine(" chat     – Enter chat mode");
+            sb.AppendLine(" exit     – Leave the game");
+            sb.AppendLine(" help     – Show this help");
+            // Sem můžeš přidat další, až je implementuješ:
+            // sb.AppendLine(" move     – Move to another room");
+            // sb.AppendLine(" pickup   – Pick up an item");
+            // sb.AppendLine(" fight    – Fight an NPC");
+            // sb.AppendLine(" trade    – Trade with another player");
+            sb.AppendLine("═══════════════════════════════════════");
+
+            await WriteToConsole.TextToPlayer(_player, sb.ToString());
+            return string.Empty;
         }
 
-        public override Task<string> Execute()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool Exit()
-        {
-            throw new NotImplementedException();
-        }
+        public override bool Exit() => false;
     }
 }

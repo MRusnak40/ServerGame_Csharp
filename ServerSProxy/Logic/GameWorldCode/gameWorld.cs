@@ -66,7 +66,9 @@ namespace ServerSProxy.Logic.GameWorldCode
         {
             return new Dictionary<string, Command>()
             {
-                { "exit",new ExitComm(player, this) }
+                { "exit",new ExitComm(player, this) },
+                { "chat", new Chat(player, this) },
+                { "help", new Help(player, this) },
             };
         }
 
@@ -166,7 +168,7 @@ namespace ServerSProxy.Logic.GameWorldCode
 
             try
             {
-               
+
                 while (!token.IsCancellationRequested && await timer.WaitForNextTickAsync(token))
                 {
                     try
@@ -182,7 +184,7 @@ namespace ServerSProxy.Logic.GameWorldCode
             }
             catch (OperationCanceledException)
             {
-            
+
                 Console.WriteLine($"[SYSTEM] Autosave pro hráče {player.Name} byl korektně ukončen.");
             }
         }
@@ -279,13 +281,13 @@ namespace ServerSProxy.Logic.GameWorldCode
                 WriteToConsole.TextToPlayer(player, "*----------------------------------*\n Login successful! Welcome back," + name + " ! \n *---------------------------------------------* ");
 
                 player.Name = name;
-
-
-
-
-
                 await SetVluesForPlayer(player);
 
+                // data missing save
+                if (string.IsNullOrEmpty(player.Class))
+                {
+                    await ChooseClassForPlayer(player);
+                }
 
                 return true;
             }
@@ -529,7 +531,7 @@ namespace ServerSProxy.Logic.GameWorldCode
                     player.IsInCombat = false;
                     player.Experience = 0;
 
-                    player.Inventory = new Inventory(new List<Item>(), new List<Item>(),5);
+                    player.Inventory = new Inventory(new List<Item>(), new List<Item>(), 5);
 
                     player.ActiveQuests = new List<Quest>();
 
@@ -589,6 +591,16 @@ namespace ServerSProxy.Logic.GameWorldCode
                     return;
                 }
 
+                if (player == null)
+                {
+
+
+                    WriteToConsole.TextToPlayer(player, "YOUR ACCOUNT IS BROKEN CHOOSE YOUR CLASS AGAIN");
+
+                    ChooseClassForPlayer(player);
+
+                }
+
 
                 if (player.Health <= 0)
                 {
@@ -596,8 +608,17 @@ namespace ServerSProxy.Logic.GameWorldCode
                 }
 
 
+                WriteToConsole.TextToPlayer(player, "\n---------------------------------------------");
+                WriteToConsole.TextToPlayer(player, $"Player: {player.Name} | Class: {player.Class} \n" +
+                    $" Level: {player.Level} | HP: {player.Health}/{player.MaxHealth} \n" +
+                    $" Shields: {player.Shield}/{player.MaxShield} | Stamina: {player.Stamina}/{player.MaxStamina} \n " +
+                    $" Strength: {player.Strength} | Attack Speed: {player.AttackSpeed} | Coins: {player.Coins}");
 
 
+                WriteToConsole.TextToPlayer(player, "\n---------------------------------------------");
+
+
+                WriteToConsole.TextToPlayer(player, "\nEnter command (type 'help' for a list of commands): ");
 
                 input = await WriteToConsole.TakeInput(player);
 

@@ -31,7 +31,7 @@ namespace ServerSProxy
             //auto save player
             _ = world.StartAutoSave();
             //load class types
-            _ = classTypeLiekEnum.LoadFromFile();
+            classTypeLiekEnum.LoadFromFile().GetAwaiter().GetResult();
 
 
 
@@ -149,8 +149,18 @@ namespace ServerSProxy
 
                             continue;
                         }
+                        else
+                        {
 
-                        clientConnect = false;
+                            clientConnect = false;
+                            WriteToConsole.TextToPlayer(player, "You have been disconnected from the server. See you next time!");
+                            throw new Exception("Player chose to disconnect");
+
+                        }
+
+
+
+
 
 
                     }
@@ -162,7 +172,8 @@ namespace ServerSProxy
 
 
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine($"Chyba v komunikaci s {player.Name}  : {ex.Message}");
             }
