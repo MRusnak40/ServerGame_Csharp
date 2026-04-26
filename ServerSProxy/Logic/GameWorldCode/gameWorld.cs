@@ -153,7 +153,8 @@ namespace ServerSProxy.Logic.GameWorldCode
 
 
 
-
+        //uprava anhrani hlavbni vec se deje v game world current room je jen informacni v hracovy 
+        //nezapomenout ho pri msrti dat a opdpojit z current room jak pri odhlaseni tak pri smrti a pak ho dat do lobby
 
 
 

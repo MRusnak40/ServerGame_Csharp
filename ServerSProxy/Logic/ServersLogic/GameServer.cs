@@ -147,7 +147,7 @@ namespace ServerSProxy
                         {
 
 
-                            await world.SpawnPlayerAsync(player);
+                           
 
                             continue;
                         }
