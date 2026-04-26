@@ -1,30 +1,56 @@
 ﻿[
   {
-    "NameOfMap": "Enchanted Forest",
+    "NameOfMap": "Tutorial Glades",
     "RoomsInMap": [
       {
-        "Name": "Forest Clearing",
+        "Name": "Northern Glade",
         "LevelOfRoom": 1,
-        "ConnectedRooms": [ "Ancient Tree", "Mushroom Circle", "Crystal Cave Entrance" ],
-        "EnemiesInRoom": [
-          {
-            "Name": "Forest Sprite",
-            "Level": 1,
-            "MaxHealth": 20,
-            "Health": 20,
-            "MaxShield": 0,
-            "Shield": 0,
-            "Stamina": 40,
-            "MaxStamina": 40,
-            "AttackSpeed": 12,
-            "Strength": 6,
-            "DroppingItems": []
-          }
-        ],
+        "ConnectedRooms": [ "Glade Ring", "Enchanted Thicket North" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [],
         "DropedItems": [
           {
             "Name": "Health Potion",
-            "Description": "Restores 20 HP.",
+            "Description": "A small vial that restores 20 health points.",
+            "Value": 5,
+            "IsStackable": true,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 20,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 20,
+            "TypeOfItem": "Potion"
+          },
+          {
+            "Name": "Stamina Tonic",
+            "Description": "Refreshes your stamina by 30 points.",
+            "Value": 4,
+            "IsStackable": true,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 30,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Potion"
+          }
+        ]
+      },
+      {
+        "Name": "Eastern Glade",
+        "LevelOfRoom": 1,
+        "ConnectedRooms": [ "Glade Ring", "Enchanted Thicket East" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [],
+        "DropedItems": [
+          {
+            "Name": "Health Potion",
+            "Description": "A small vial that restores 20 health points.",
             "Value": 5,
             "IsStackable": true,
             "IsEquippable": false,
@@ -39,14 +65,64 @@
         ]
       },
       {
-        "Name": "Ancient Tree",
+        "Name": "Southern Glade",
         "LevelOfRoom": 1,
-        "ConnectedRooms": [ "Forest Clearing", "Elven Outpost" ],
+        "ConnectedRooms": [ "Glade Ring", "Enchanted Thicket South" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [],
         "DropedItems": [
           {
-            "Name": "Wooden Sword",
-            "Description": "A simple blade. +3 Strength.",
+            "Name": "Wooden Shield",
+            "Description": "A crude wooden shield that increases your shield by 5.",
+            "Value": 8,
+            "IsStackable": false,
+            "IsEquippable": true,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 5,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Shield"
+          }
+        ]
+      },
+      {
+        "Name": "Western Glade",
+        "LevelOfRoom": 1,
+        "ConnectedRooms": [ "Glade Ring", "Enchanted Thicket West" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [],
+        "DropedItems": [
+          {
+            "Name": "Health Potion",
+            "Description": "A small vial that restores 20 health points.",
+            "Value": 5,
+            "IsStackable": true,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 20,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 20,
+            "TypeOfItem": "Potion"
+          }
+        ]
+      },
+      {
+        "Name": "Fifth Glade",
+        "LevelOfRoom": 1,
+        "ConnectedRooms": [ "Glade Ring", "Enchanted Thicket Fifth" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [],
+        "DropedItems": [
+          {
+            "Name": "Rusty Sword",
+            "Description": "An old blade that adds 3 strength. Better than nothing.",
             "Value": 10,
             "IsStackable": false,
             "IsEquippable": true,
@@ -61,116 +137,33 @@
         ]
       },
       {
-        "Name": "Mushroom Circle",
+        "Name": "Glade Ring",
         "LevelOfRoom": 1,
-        "ConnectedRooms": [ "Forest Clearing" ],
-        "EnemiesInRoom": [],
-        "DropedItems": [
-          {
-            "Name": "Mushroom",
-            "Description": "A glowing mushroom. Restores 10 HP.",
-            "Value": 2,
-            "IsStackable": true,
-            "IsEquippable": false,
-            "AttackBonus": 0,
-            "HealthBonus": 0,
-            "StaminaBonus": 0,
-            "ArmorBonus": 0,
-            "AttackSpeedBonus": 0,
-            "HealUPBonus": 10,
-            "TypeOfItem": "Consumable"
-          }
-        ]
-      },
-      {
-        "Name": "Elven Outpost",
-        "LevelOfRoom": 2,
-        "ConnectedRooms": [ "Ancient Tree", "Crystal Cave Entrance" ],
+        "ConnectedRooms": [ "Northern Glade", "Eastern Glade", "Southern Glade", "Western Glade", "Fifth Glade" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
-            "Name": "Elven Scout",
-            "Level": 2,
-            "MaxHealth": 30,
-            "Health": 30,
-            "MaxShield": 5,
-            "Shield": 5,
-            "Stamina": 50,
-            "MaxStamina": 50,
-            "AttackSpeed": 14,
-            "Strength": 10,
-            "DroppingItems": [
-              {
-                "Name": "Leather Armor",
-                "Description": "+5 Shield.",
-                "Value": 15,
-                "IsStackable": false,
-                "IsEquippable": true,
-                "AttackBonus": 0,
-                "HealthBonus": 0,
-                "StaminaBonus": 0,
-                "ArmorBonus": 5,
-                "AttackSpeedBonus": 0,
-                "HealUPBonus": 0,
-                "TypeOfItem": "Armor"
-              }
-            ]
-          }
-        ],
-        "DropedItems": []
-      },
-      {
-        "Name": "Crystal Cave Entrance",
-        "LevelOfRoom": 2,
-        "ConnectedRooms": [ "Forest Clearing", "Elven Outpost", "Crystal Cavern" ],
-        "EnemiesInRoom": [],
-        "DropedItems": [
-          {
-            "Name": "Crystal Shard",
-            "Description": "A sharp crystal. +4 Attack.",
-            "Value": 8,
-            "IsStackable": false,
-            "IsEquippable": true,
-            "AttackBonus": 4,
-            "HealthBonus": 0,
-            "StaminaBonus": 0,
-            "ArmorBonus": 0,
-            "AttackSpeedBonus": 0,
-            "HealUPBonus": 0,
-            "TypeOfItem": "Dagger"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "NameOfMap": "Crystal Caves",
-    "RoomsInMap": [
-      {
-        "Name": "Crystal Cavern",
-        "LevelOfRoom": 2,
-        "ConnectedRooms": [ "Crystal Cave Entrance", "Glowing Chamber", "Miners' Camp" ],
-        "EnemiesInRoom": [
-          {
-            "Name": "Crystal Bat",
-            "Level": 2,
-            "MaxHealth": 25,
-            "Health": 25,
+            "Name": "Lost Bunny",
+            "Level": 1,
+            "MaxHealth": 10,
+            "Health": 10,
             "MaxShield": 0,
             "Shield": 0,
-            "Stamina": 60,
-            "MaxStamina": 60,
-            "AttackSpeed": 16,
-            "Strength": 8,
+            "MaxStamina": 20,
+            "Stamina": 20,
+            "AttackSpeed": 8,
+            "Strength": 2,
             "DroppingItems": [
               {
-                "Name": "Bat Wing",
-                "Description": "Increases stamina by 10.",
-                "Value": 4,
+                "Name": "Bunny Tail",
+                "Description": "A fluffy tail that slightly increases stamina regen.",
+                "Value": 1,
                 "IsStackable": false,
                 "IsEquippable": false,
                 "AttackBonus": 0,
                 "HealthBonus": 0,
-                "StaminaBonus": 10,
+                "StaminaBonus": 5,
                 "ArmorBonus": 0,
                 "AttackSpeedBonus": 0,
                 "HealUPBonus": 0,
@@ -182,15 +175,226 @@
         "DropedItems": []
       },
       {
-        "Name": "Glowing Chamber",
-        "LevelOfRoom": 3,
-        "ConnectedRooms": [ "Crystal Cavern", "Deep Crystal Lake" ],
-        "EnemiesInRoom": [],
+        "Name": "Enchanted Thicket North",
+        "LevelOfRoom": 2,
+        "ConnectedRooms": [ "Northern Glade", "Crystal Cavern North" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Thorn Sprite",
+            "Level": 2,
+            "MaxHealth": 25,
+            "Health": 25,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 45,
+            "Stamina": 45,
+            "AttackSpeed": 14,
+            "Strength": 9,
+            "DroppingItems": [
+              {
+                "Name": "Thorny Whip",
+                "Description": "A flexible whip that grants +4 strength.",
+                "Value": 12,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 4,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Whip"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Enchanted Thicket East",
+        "LevelOfRoom": 2,
+        "ConnectedRooms": [ "Eastern Glade", "Crystal Cavern East" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Thorn Sprite",
+            "Level": 2,
+            "MaxHealth": 25,
+            "Health": 25,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 45,
+            "Stamina": 45,
+            "AttackSpeed": 14,
+            "Strength": 9,
+            "DroppingItems": []
+          }
+        ],
         "DropedItems": [
           {
-            "Name": "Glowing Gem",
-            "Description": "Empowers your weapon. +6 Strength.",
-            "Value": 20,
+            "Name": "Leather Armor",
+            "Description": "Basic armor that adds 5 shield.",
+            "Value": 15,
+            "IsStackable": false,
+            "IsEquippable": true,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 5,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Armor"
+          }
+        ]
+      },
+      {
+        "Name": "Enchanted Thicket South",
+        "LevelOfRoom": 2,
+        "ConnectedRooms": [ "Southern Glade", "Crystal Cavern South" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Forest Goblin",
+            "Level": 2,
+            "MaxHealth": 30,
+            "Health": 30,
+            "MaxShield": 5,
+            "Shield": 5,
+            "MaxStamina": 40,
+            "Stamina": 40,
+            "AttackSpeed": 10,
+            "Strength": 11,
+            "DroppingItems": [
+              {
+                "Name": "Goblin Dagger",
+                "Description": "A small blade. +3 attack speed.",
+                "Value": 9,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 3,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Dagger"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Enchanted Thicket West",
+        "LevelOfRoom": 2,
+        "ConnectedRooms": [ "Western Glade", "Crystal Cavern West" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Forest Goblin",
+            "Level": 2,
+            "MaxHealth": 30,
+            "Health": 30,
+            "MaxShield": 5,
+            "Shield": 5,
+            "MaxStamina": 40,
+            "Stamina": 40,
+            "AttackSpeed": 10,
+            "Strength": 11,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": [
+          {
+            "Name": "Swiftness Potion",
+            "Description": "Increases attack speed by 5 temporarily.",
+            "Value": 7,
+            "IsStackable": true,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 5,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Potion"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "NameOfMap": "Crystal Caves",
+    "RoomsInMap": [
+      {
+        "Name": "Crystal Cavern North",
+        "LevelOfRoom": 3,
+        "ConnectedRooms": [ "Enchanted Thicket North", "Crystal Ring", "Molten Tunnel North" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Crystal Bat",
+            "Level": 3,
+            "MaxHealth": 35,
+            "Health": 35,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 55,
+            "Stamina": 55,
+            "AttackSpeed": 18,
+            "Strength": 12,
+            "DroppingItems": [
+              {
+                "Name": "Bat Wing",
+                "Description": "Increases stamina by 8.",
+                "Value": 5,
+                "IsStackable": false,
+                "IsEquippable": false,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 8,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Consumable"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Crystal Cavern East",
+        "LevelOfRoom": 3,
+        "ConnectedRooms": [ "Enchanted Thicket East", "Crystal Ring", "Molten Tunnel East" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Crystal Bat",
+            "Level": 3,
+            "MaxHealth": 35,
+            "Health": 35,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 55,
+            "Stamina": 55,
+            "AttackSpeed": 18,
+            "Strength": 12,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": [
+          {
+            "Name": "Crystal Shard",
+            "Description": "A sharp crystal that adds 6 strength.",
+            "Value": 18,
             "IsStackable": false,
             "IsEquippable": true,
             "AttackBonus": 6,
@@ -199,14 +403,16 @@
             "ArmorBonus": 0,
             "AttackSpeedBonus": 0,
             "HealUPBonus": 0,
-            "TypeOfItem": "Rune"
+            "TypeOfItem": "Dagger"
           }
         ]
       },
       {
-        "Name": "Miners' Camp",
-        "LevelOfRoom": 2,
-        "ConnectedRooms": [ "Crystal Cavern", "Deep Crystal Lake", "Swamp Path" ],
+        "Name": "Crystal Cavern South",
+        "LevelOfRoom": 3,
+        "ConnectedRooms": [ "Enchanted Thicket South", "Crystal Ring", "Molten Tunnel South" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
             "Name": "Crystal Golem",
@@ -215,21 +421,21 @@
             "Health": 50,
             "MaxShield": 10,
             "Shield": 10,
-            "Stamina": 30,
             "MaxStamina": 30,
+            "Stamina": 30,
             "AttackSpeed": 8,
             "Strength": 15,
             "DroppingItems": [
               {
                 "Name": "Crystal Shield",
-                "Description": "+15 Shield.",
+                "Description": "A sturdy shield that boosts your shield by 12.",
                 "Value": 25,
                 "IsStackable": false,
                 "IsEquippable": true,
                 "AttackBonus": 0,
                 "HealthBonus": 0,
                 "StaminaBonus": 0,
-                "ArmorBonus": 15,
+                "ArmorBonus": 12,
                 "AttackSpeedBonus": 0,
                 "HealUPBonus": 0,
                 "TypeOfItem": "Shield"
@@ -240,119 +446,75 @@
         "DropedItems": []
       },
       {
-        "Name": "Deep Crystal Lake",
+        "Name": "Crystal Cavern West",
         "LevelOfRoom": 3,
-        "ConnectedRooms": [ "Glowing Chamber", "Miners' Camp", "Swamp Path" ],
-        "EnemiesInRoom": [],
+        "ConnectedRooms": [ "Enchanted Thicket West", "Crystal Ring", "Molten Tunnel West" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Crystal Golem",
+            "Level": 3,
+            "MaxHealth": 50,
+            "Health": 50,
+            "MaxShield": 10,
+            "Shield": 10,
+            "MaxStamina": 30,
+            "Stamina": 30,
+            "AttackSpeed": 8,
+            "Strength": 15,
+            "DroppingItems": []
+          }
+        ],
         "DropedItems": [
           {
-            "Name": "Lake Water",
-            "Description": "Heals 30 HP.",
-            "Value": 6,
+            "Name": "Stamina Crystal",
+            "Description": "Restores 40 stamina.",
+            "Value": 8,
             "IsStackable": true,
             "IsEquippable": false,
             "AttackBonus": 0,
             "HealthBonus": 0,
-            "StaminaBonus": 0,
+            "StaminaBonus": 40,
             "ArmorBonus": 0,
             "AttackSpeedBonus": 0,
-            "HealUPBonus": 30,
+            "HealUPBonus": 0,
             "TypeOfItem": "Potion"
           }
         ]
-      }
-    ]
-  },
-  {
-    "NameOfMap": "Shadow Swamp",
-    "RoomsInMap": [
-      {
-        "Name": "Swamp Path",
-        "LevelOfRoom": 3,
-        "ConnectedRooms": [ "Miners' Camp", "Deep Crystal Lake", "Witch's Hut", "Misty Bog" ],
-        "EnemiesInRoom": [
-          {
-            "Name": "Swamp Serpent",
-            "Level": 3,
-            "MaxHealth": 45,
-            "Health": 45,
-            "MaxShield": 5,
-            "Shield": 5,
-            "Stamina": 50,
-            "MaxStamina": 50,
-            "AttackSpeed": 13,
-            "Strength": 12,
-            "DroppingItems": []
-          }
-        ],
-        "DropedItems": []
       },
       {
-        "Name": "Witch's Hut",
-        "LevelOfRoom": 4,
-        "ConnectedRooms": [ "Swamp Path" ],
+        "Name": "Crystal Ring",
+        "LevelOfRoom": 3,
+        "ConnectedRooms": [ "Crystal Cavern North", "Crystal Cavern East", "Crystal Cavern South", "Crystal Cavern West" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
-            "Name": "Swamp Witch",
-            "Level": 4,
-            "MaxHealth": 40,
-            "Health": 40,
+            "Name": "Shimmering Wisp",
+            "Level": 3,
+            "MaxHealth": 25,
+            "Health": 25,
             "MaxShield": 0,
             "Shield": 0,
-            "Stamina": 80,
-            "MaxStamina": 80,
-            "AttackSpeed": 10,
-            "Strength": 18,
-            "DroppingItems": [
-              {
-                "Name": "Witch's Staff",
-                "Description": "+10 Strength.",
-                "Value": 35,
-                "IsStackable": false,
-                "IsEquippable": true,
-                "AttackBonus": 10,
-                "HealthBonus": 0,
-                "StaminaBonus": 0,
-                "ArmorBonus": 0,
-                "AttackSpeedBonus": 0,
-                "HealUPBonus": 0,
-                "TypeOfItem": "Staff"
-              }
-            ]
-          }
-        ],
-        "DropedItems": []
-      },
-      {
-        "Name": "Misty Bog",
-        "LevelOfRoom": 4,
-        "ConnectedRooms": [ "Swamp Path", "Forgotten Graveyard" ],
-        "EnemiesInRoom": [
-          {
-            "Name": "Bog Monster",
-            "Level": 4,
-            "MaxHealth": 60,
-            "Health": 60,
-            "MaxShield": 10,
-            "Shield": 10,
-            "Stamina": 60,
             "MaxStamina": 60,
-            "AttackSpeed": 9,
-            "Strength": 16,
+            "Stamina": 60,
+            "AttackSpeed": 20,
+            "Strength": 8,
             "DroppingItems": [
               {
-                "Name": "Bog Slime",
-                "Description": "Restores 40 HP.",
-                "Value": 8,
-                "IsStackable": true,
+                "Name": "Wisp Essence",
+                "Description": "A glowing essence that permanently increases magic find.",
+                "Value": 0,
+                "IsStackable": false,
                 "IsEquippable": false,
                 "AttackBonus": 0,
                 "HealthBonus": 0,
                 "StaminaBonus": 0,
                 "ArmorBonus": 0,
                 "AttackSpeedBonus": 0,
-                "HealUPBonus": 40,
-                "TypeOfItem": "Potion"
+                "HealUPBonus": 0,
+                "TypeOfItem": "Quest"
               }
             ]
           }
@@ -360,169 +522,174 @@
         "DropedItems": []
       },
       {
-        "Name": "Forgotten Graveyard",
+        "Name": "Molten Tunnel North",
         "LevelOfRoom": 4,
-        "ConnectedRooms": [ "Misty Bog", "Molten Fissure" ],
+        "ConnectedRooms": [ "Crystal Cavern North", "Sky Bridge North" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
-            "Name": "Skeleton Warrior",
+            "Name": "Lava Slug",
             "Level": 4,
-            "MaxHealth": 55,
-            "Health": 55,
-            "MaxShield": 15,
-            "Shield": 15,
-            "Stamina": 40,
-            "MaxStamina": 40,
-            "AttackSpeed": 11,
-            "Strength": 14,
+            "MaxHealth": 45,
+            "Health": 45,
+            "MaxShield": 5,
+            "Shield": 5,
+            "MaxStamina": 50,
+            "Stamina": 50,
+            "AttackSpeed": 6,
+            "Strength": 18,
             "DroppingItems": [
               {
-                "Name": "Iron Sword",
-                "Description": "+7 Strength.",
-                "Value": 22,
+                "Name": "Magma Core",
+                "Description": "Boosts strength by 10 for one battle.",
+                "Value": 12,
                 "IsStackable": false,
-                "IsEquippable": true,
-                "AttackBonus": 7,
+                "IsEquippable": false,
+                "AttackBonus": 10,
                 "HealthBonus": 0,
                 "StaminaBonus": 0,
                 "ArmorBonus": 0,
                 "AttackSpeedBonus": 0,
                 "HealUPBonus": 0,
-                "TypeOfItem": "Sword"
+                "TypeOfItem": "Consumable"
               }
             ]
           }
         ],
         "DropedItems": []
-      }
-    ]
-  },
-  {
-    "NameOfMap": "Molten Depths",
-    "RoomsInMap": [
+      },
       {
-        "Name": "Molten Fissure",
-        "LevelOfRoom": 5,
-        "ConnectedRooms": [ "Forgotten Graveyard", "Fire Lake", "Magma Forge" ],
+        "Name": "Molten Tunnel East",
+        "LevelOfRoom": 4,
+        "ConnectedRooms": [ "Crystal Cavern East", "Sky Bridge East" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
-            "Name": "Fire Elemental",
-            "Level": 5,
-            "MaxHealth": 70,
-            "Health": 70,
-            "MaxShield": 10,
-            "Shield": 10,
-            "Stamina": 70,
+            "Name": "Lava Slug",
+            "Level": 4,
+            "MaxHealth": 45,
+            "Health": 45,
+            "MaxShield": 5,
+            "Shield": 5,
+            "MaxStamina": 50,
+            "Stamina": 50,
+            "AttackSpeed": 6,
+            "Strength": 18,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": [
+          {
+            "Name": "Fire Resistance Potion",
+            "Description": "Increases shield by 15 for a short time.",
+            "Value": 10,
+            "IsStackable": true,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 15,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Potion"
+          }
+        ]
+      },
+      {
+        "Name": "Molten Tunnel South",
+        "LevelOfRoom": 4,
+        "ConnectedRooms": [ "Crystal Cavern South", "Sky Bridge South" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Fire Imp",
+            "Level": 4,
+            "MaxHealth": 40,
+            "Health": 40,
+            "MaxShield": 0,
+            "Shield": 0,
             "MaxStamina": 70,
-            "AttackSpeed": 15,
-            "Strength": 20,
+            "Stamina": 70,
+            "AttackSpeed": 16,
+            "Strength": 14,
+            "DroppingItems": [
+              {
+                "Name": "Imp Horn",
+                "Description": "Increases attack speed by 4.",
+                "Value": 14,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 4,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Accessory"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Molten Tunnel West",
+        "LevelOfRoom": 4,
+        "ConnectedRooms": [ "Crystal Cavern West", "Sky Bridge West" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Fire Imp",
+            "Level": 4,
+            "MaxHealth": 40,
+            "Health": 40,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 70,
+            "Stamina": 70,
+            "AttackSpeed": 16,
+            "Strength": 14,
             "DroppingItems": []
           }
         ],
         "DropedItems": []
       },
       {
-        "Name": "Fire Lake",
-        "LevelOfRoom": 5,
-        "ConnectedRooms": [ "Molten Fissure", "Dragon's Lair" ],
-        "EnemiesInRoom": [],
-        "DropedItems": [
-          {
-            "Name": "Fire Essence",
-            "Description": "+15 Strength for 1 fight.",
-            "Value": 15,
-            "IsStackable": false,
-            "IsEquippable": false,
-            "AttackBonus": 0,
-            "HealthBonus": 0,
-            "StaminaBonus": 0,
-            "ArmorBonus": 0,
-            "AttackSpeedBonus": 0,
-            "HealUPBonus": 0,
-            "TypeOfItem": "Consumable"
-          }
-        ]
-      },
-      {
-        "Name": "Magma Forge",
-        "LevelOfRoom": 5,
-        "ConnectedRooms": [ "Molten Fissure", "Dragon's Lair" ],
+        "Name": "Molten Ring",
+        "LevelOfRoom": 4,
+        "ConnectedRooms": [ "Molten Tunnel North", "Molten Tunnel East", "Molten Tunnel South", "Molten Tunnel West" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
-            "Name": "Magma Golem",
-            "Level": 5,
-            "MaxHealth": 90,
-            "Health": 90,
-            "MaxShield": 20,
-            "Shield": 20,
-            "Stamina": 50,
+            "Name": "Magma Elemental",
+            "Level": 4,
+            "MaxHealth": 65,
+            "Health": 65,
+            "MaxShield": 10,
+            "Shield": 10,
             "MaxStamina": 50,
-            "AttackSpeed": 7,
-            "Strength": 25,
+            "Stamina": 50,
+            "AttackSpeed": 9,
+            "Strength": 20,
             "DroppingItems": [
               {
-                "Name": "Magma Armor",
-                "Description": "+20 Shield.",
-                "Value": 40,
+                "Name": "Ember Stone",
+                "Description": "A stone that radiates heat. +8 strength.",
+                "Value": 22,
                 "IsStackable": false,
                 "IsEquippable": true,
-                "AttackBonus": 0,
-                "HealthBonus": 0,
-                "StaminaBonus": 0,
-                "ArmorBonus": 20,
-                "AttackSpeedBonus": 0,
-                "HealUPBonus": 0,
-                "TypeOfItem": "Armor"
-              }
-            ]
-          }
-        ],
-        "DropedItems": []
-      },
-      {
-        "Name": "Dragon's Lair",
-        "LevelOfRoom": 6,
-        "ConnectedRooms": [ "Fire Lake", "Magma Forge", "Cloud Bridge" ],
-        "EnemiesInRoom": [
-          {
-            "Name": "Young Dragon",
-            "Level": 6,
-            "MaxHealth": 120,
-            "Health": 120,
-            "MaxShield": 25,
-            "Shield": 25,
-            "Stamina": 80,
-            "MaxStamina": 80,
-            "AttackSpeed": 12,
-            "Strength": 30,
-            "DroppingItems": [
-              {
-                "Name": "Dragon Scale",
-                "Description": "+25 Shield.",
-                "Value": 60,
-                "IsStackable": false,
-                "IsEquippable": true,
-                "AttackBonus": 0,
-                "HealthBonus": 0,
-                "StaminaBonus": 0,
-                "ArmorBonus": 25,
-                "AttackSpeedBonus": 0,
-                "HealUPBonus": 0,
-                "TypeOfItem": "Shield"
-              },
-              {
-                "Name": "Dragon Fang Sword",
-                "Description": "+15 Strength.",
-                "Value": 55,
-                "IsStackable": false,
-                "IsEquippable": true,
-                "AttackBonus": 15,
+                "AttackBonus": 8,
                 "HealthBonus": 0,
                 "StaminaBonus": 0,
                 "ArmorBonus": 0,
                 "AttackSpeedBonus": 0,
                 "HealUPBonus": 0,
-                "TypeOfItem": "Sword"
+                "TypeOfItem": "Rune"
               }
             ]
           }
@@ -535,41 +702,150 @@
     "NameOfMap": "Sky Citadel",
     "RoomsInMap": [
       {
-        "Name": "Cloud Bridge",
-        "LevelOfRoom": 6,
-        "ConnectedRooms": [ "Dragon's Lair", "Sky Plaza", "Wind Tower" ],
+        "Name": "Sky Bridge North",
+        "LevelOfRoom": 5,
+        "ConnectedRooms": [ "Molten Tunnel North", "Citadel Plaza North", "Sky Ring" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
-            "Name": "Cloud Giant",
-            "Level": 6,
-            "MaxHealth": 100,
-            "Health": 100,
-            "MaxShield": 30,
-            "Shield": 30,
-            "Stamina": 60,
-            "MaxStamina": 60,
-            "AttackSpeed": 10,
+            "Name": "Cloud Serpent",
+            "Level": 5,
+            "MaxHealth": 70,
+            "Health": 70,
+            "MaxShield": 10,
+            "Shield": 10,
+            "MaxStamina": 80,
+            "Stamina": 80,
+            "AttackSpeed": 15,
             "Strength": 22,
-            "DroppingItems": []
+            "DroppingItems": [
+              {
+                "Name": "Serpent Scale",
+                "Description": "A light scale that enhances dodge. +6 attack speed.",
+                "Value": 28,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 6,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Accessory"
+              }
+            ]
           }
         ],
         "DropedItems": []
       },
       {
-        "Name": "Sky Plaza",
-        "LevelOfRoom": 6,
-        "ConnectedRooms": [ "Cloud Bridge", "Citadel Armory" ],
-        "EnemiesInRoom": [],
+        "Name": "Sky Bridge East",
+        "LevelOfRoom": 5,
+        "ConnectedRooms": [ "Molten Tunnel East", "Citadel Plaza East", "Sky Ring" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Cloud Serpent",
+            "Level": 5,
+            "MaxHealth": 70,
+            "Health": 70,
+            "MaxShield": 10,
+            "Shield": 10,
+            "MaxStamina": 80,
+            "Stamina": 80,
+            "AttackSpeed": 15,
+            "Strength": 22,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": [
+          {
+            "Name": "Wind Charm",
+            "Description": "A charm that grants +10 stamina regen.",
+            "Value": 18,
+            "IsStackable": false,
+            "IsEquippable": true,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 10,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Accessory"
+          }
+        ]
+      },
+      {
+        "Name": "Sky Bridge South",
+        "LevelOfRoom": 5,
+        "ConnectedRooms": [ "Molten Tunnel South", "Citadel Plaza South", "Sky Ring" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Sky Griffin",
+            "Level": 5,
+            "MaxHealth": 80,
+            "Health": 80,
+            "MaxShield": 15,
+            "Shield": 15,
+            "MaxStamina": 65,
+            "Stamina": 65,
+            "AttackSpeed": 13,
+            "Strength": 24,
+            "DroppingItems": [
+              {
+                "Name": "Griffin Feather",
+                "Description": "Increases both health and stamina by 15.",
+                "Value": 30,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 15,
+                "StaminaBonus": 15,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Accessory"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Sky Bridge West",
+        "LevelOfRoom": 5,
+        "ConnectedRooms": [ "Molten Tunnel West", "Citadel Plaza West", "Sky Ring" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Sky Griffin",
+            "Level": 5,
+            "MaxHealth": 80,
+            "Health": 80,
+            "MaxShield": 15,
+            "Shield": 15,
+            "MaxStamina": 65,
+            "Stamina": 65,
+            "AttackSpeed": 13,
+            "Strength": 24,
+            "DroppingItems": []
+          }
+        ],
         "DropedItems": [
           {
             "Name": "Blessed Potion",
-            "Description": "Restores 50 HP.",
-            "Value": 10,
+            "Description": "Restores 50 HP and 30 stamina.",
+            "Value": 15,
             "IsStackable": true,
             "IsEquippable": false,
             "AttackBonus": 0,
-            "HealthBonus": 0,
-            "StaminaBonus": 0,
+            "HealthBonus": 50,
+            "StaminaBonus": 30,
             "ArmorBonus": 0,
             "AttackSpeedBonus": 0,
             "HealUPBonus": 50,
@@ -578,26 +854,28 @@
         ]
       },
       {
-        "Name": "Wind Tower",
-        "LevelOfRoom": 6,
-        "ConnectedRooms": [ "Cloud Bridge", "Citadel Armory" ],
+        "Name": "Sky Ring",
+        "LevelOfRoom": 5,
+        "ConnectedRooms": [ "Sky Bridge North", "Sky Bridge East", "Sky Bridge South", "Sky Bridge West" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
-            "Name": "Wind Elemental",
-            "Level": 7,
-            "MaxHealth": 80,
-            "Health": 80,
-            "MaxShield": 15,
-            "Shield": 15,
-            "Stamina": 90,
+            "Name": "Storm Elemental",
+            "Level": 5,
+            "MaxHealth": 60,
+            "Health": 60,
+            "MaxShield": 5,
+            "Shield": 5,
             "MaxStamina": 90,
-            "AttackSpeed": 20,
+            "Stamina": 90,
+            "AttackSpeed": 22,
             "Strength": 18,
             "DroppingItems": [
               {
-                "Name": "Wind Boots",
-                "Description": "+10 Attack Speed.",
-                "Value": 30,
+                "Name": "Storm Core",
+                "Description": "A swirling core that grants +10 attack speed.",
+                "Value": 35,
                 "IsStackable": false,
                 "IsEquippable": true,
                 "AttackBonus": 0,
@@ -606,7 +884,7 @@
                 "ArmorBonus": 0,
                 "AttackSpeedBonus": 10,
                 "HealUPBonus": 0,
-                "TypeOfItem": "Boots"
+                "TypeOfItem": "Rune"
               }
             ]
           }
@@ -614,35 +892,189 @@
         "DropedItems": []
       },
       {
-        "Name": "Citadel Armory",
-        "LevelOfRoom": 7,
-        "ConnectedRooms": [ "Sky Plaza", "Wind Tower", "Eldritch Gate" ],
+        "Name": "Citadel Plaza North",
+        "LevelOfRoom": 6,
+        "ConnectedRooms": [ "Sky Bridge North", "Sanctum Gate North" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
-            "Name": "Armory Guard",
-            "Level": 7,
-            "MaxHealth": 110,
-            "Health": 110,
-            "MaxShield": 25,
-            "Shield": 25,
-            "Stamina": 70,
-            "MaxStamina": 70,
-            "AttackSpeed": 12,
-            "Strength": 25,
+            "Name": "Citadel Knight",
+            "Level": 6,
+            "MaxHealth": 100,
+            "Health": 100,
+            "MaxShield": 20,
+            "Shield": 20,
+            "MaxStamina": 60,
+            "Stamina": 60,
+            "AttackSpeed": 11,
+            "Strength": 26,
             "DroppingItems": [
               {
-                "Name": "Citadel Armor",
-                "Description": "+30 Shield.",
+                "Name": "Knight's Sword",
+                "Description": "A well-crafted blade. +12 strength.",
+                "Value": 45,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 12,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Sword"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Citadel Plaza East",
+        "LevelOfRoom": 6,
+        "ConnectedRooms": [ "Sky Bridge East", "Sanctum Gate East" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Citadel Knight",
+            "Level": 6,
+            "MaxHealth": 100,
+            "Health": 100,
+            "MaxShield": 20,
+            "Shield": 20,
+            "MaxStamina": 60,
+            "Stamina": 60,
+            "AttackSpeed": 11,
+            "Strength": 26,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": [
+          {
+            "Name": "Citadel Shield",
+            "Description": "Increases shield by 20.",
+            "Value": 50,
+            "IsStackable": false,
+            "IsEquippable": true,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 20,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Shield"
+          }
+        ]
+      },
+      {
+        "Name": "Citadel Plaza South",
+        "LevelOfRoom": 6,
+        "ConnectedRooms": [ "Sky Bridge South", "Sanctum Gate South" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Citadel Archer",
+            "Level": 6,
+            "MaxHealth": 80,
+            "Health": 80,
+            "MaxShield": 5,
+            "Shield": 5,
+            "MaxStamina": 70,
+            "Stamina": 70,
+            "AttackSpeed": 18,
+            "Strength": 22,
+            "DroppingItems": [
+              {
+                "Name": "Elven Bow",
+                "Description": "A fine bow that adds 8 strength and 5 attack speed.",
+                "Value": 55,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 8,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 5,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Bow"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Citadel Plaza West",
+        "LevelOfRoom": 6,
+        "ConnectedRooms": [ "Sky Bridge West", "Sanctum Gate West" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Citadel Archer",
+            "Level": 6,
+            "MaxHealth": 80,
+            "Health": 80,
+            "MaxShield": 5,
+            "Shield": 5,
+            "MaxStamina": 70,
+            "Stamina": 70,
+            "AttackSpeed": 18,
+            "Strength": 22,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": [
+          {
+            "Name": "Greater Health Potion",
+            "Description": "Restores 75 HP.",
+            "Value": 20,
+            "IsStackable": true,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 75,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 75,
+            "TypeOfItem": "Potion"
+          }
+        ]
+      },
+      {
+        "Name": "Citadel Ring",
+        "LevelOfRoom": 6,
+        "ConnectedRooms": [ "Citadel Plaza North", "Citadel Plaza East", "Citadel Plaza South", "Citadel Plaza West" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Archon of Wind",
+            "Level": 6,
+            "MaxHealth": 120,
+            "Health": 120,
+            "MaxShield": 25,
+            "Shield": 25,
+            "MaxStamina": 80,
+            "Stamina": 80,
+            "AttackSpeed": 14,
+            "Strength": 30,
+            "DroppingItems": [
+              {
+                "Name": "Wind Lord's Amulet",
+                "Description": "Grants +15 strength and +10 stamina.",
                 "Value": 65,
                 "IsStackable": false,
                 "IsEquippable": true,
-                "AttackBonus": 0,
+                "AttackBonus": 15,
                 "HealthBonus": 0,
-                "StaminaBonus": 0,
-                "ArmorBonus": 30,
+                "StaminaBonus": 10,
+                "ArmorBonus": 0,
                 "AttackSpeedBonus": 0,
                 "HealUPBonus": 0,
-                "TypeOfItem": "Armor"
+                "TypeOfItem": "Amulet"
               }
             ]
           }
@@ -655,35 +1087,235 @@
     "NameOfMap": "Eldritch Sanctum",
     "RoomsInMap": [
       {
-        "Name": "Eldritch Gate",
+        "Name": "Sanctum Gate North",
         "LevelOfRoom": 7,
-        "ConnectedRooms": [ "Citadel Armory", "Sanctum Main Hall" ],
-        "EnemiesInRoom": [],
+        "ConnectedRooms": [ "Citadel Plaza North", "Sanctum Main Hall" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Eldritch Guardian",
+            "Level": 7,
+            "MaxHealth": 130,
+            "Health": 130,
+            "MaxShield": 30,
+            "Shield": 30,
+            "MaxStamina": 70,
+            "Stamina": 70,
+            "AttackSpeed": 12,
+            "Strength": 32,
+            "DroppingItems": [
+              {
+                "Name": "Guardian Plate",
+                "Description": "Heavy armor. +25 shield.",
+                "Value": 70,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 25,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Armor"
+              }
+            ]
+          }
+        ],
         "DropedItems": []
       },
       {
-        "Name": "Sanctum Main Hall",
-        "LevelOfRoom": 8,
-        "ConnectedRooms": [ "Eldritch Gate", "Forbidden Library", "Boss Chamber" ],
+        "Name": "Sanctum Gate East",
+        "LevelOfRoom": 7,
+        "ConnectedRooms": [ "Citadel Plaza East", "Sanctum Main Hall" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
-            "Name": "Eldritch Horror",
-            "Level": 8,
+            "Name": "Eldritch Guardian",
+            "Level": 7,
             "MaxHealth": 130,
             "Health": 130,
-            "MaxShield": 20,
-            "Shield": 20,
-            "Stamina": 90,
-            "MaxStamina": 90,
-            "AttackSpeed": 14,
+            "MaxShield": 30,
+            "Shield": 30,
+            "MaxStamina": 70,
+            "Stamina": 70,
+            "AttackSpeed": 12,
+            "Strength": 32,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": [
+          {
+            "Name": "Mystic Staff",
+            "Description": "A staff that amplifies magic. +18 strength.",
+            "Value": 75,
+            "IsStackable": false,
+            "IsEquippable": true,
+            "AttackBonus": 18,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Staff"
+          }
+        ]
+      },
+      {
+        "Name": "Sanctum Gate South",
+        "LevelOfRoom": 7,
+        "ConnectedRooms": [ "Citadel Plaza South", "Sanctum Main Hall" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Eldritch Wraith",
+            "Level": 7,
+            "MaxHealth": 110,
+            "Health": 110,
+            "MaxShield": 5,
+            "Shield": 5,
+            "MaxStamina": 100,
+            "Stamina": 100,
+            "AttackSpeed": 20,
+            "Strength": 28,
+            "DroppingItems": [
+              {
+                "Name": "Wraith Essence",
+                "Description": "Boosts attack speed by 12.",
+                "Value": 45,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 12,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Rune"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Sanctum Gate West",
+        "LevelOfRoom": 7,
+        "ConnectedRooms": [ "Citadel Plaza West", "Sanctum Main Hall" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Eldritch Wraith",
+            "Level": 7,
+            "MaxHealth": 110,
+            "Health": 110,
+            "MaxShield": 5,
+            "Shield": 5,
+            "MaxStamina": 100,
+            "Stamina": 100,
+            "AttackSpeed": 20,
             "Strength": 28,
             "DroppingItems": []
           }
         ],
         "DropedItems": [
           {
-            "Name": "Eldritch Tome",
-            "Description": "Grants 500 XP.",
+            "Name": "Sanctum Key",
+            "Description": "A key that opens the inner chamber.",
+            "Value": 0,
+            "IsStackable": false,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Key"
+          }
+        ]
+      },
+      {
+        "Name": "Sanctum Main Hall",
+        "LevelOfRoom": 8,
+        "ConnectedRooms": [ "Sanctum Gate North", "Sanctum Gate East", "Sanctum Gate South", "Sanctum Gate West", "Forbidden Library", "Boss Chamber" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Eldritch Knight",
+            "Level": 8,
+            "MaxHealth": 160,
+            "Health": 160,
+            "MaxShield": 35,
+            "Shield": 35,
+            "MaxStamina": 75,
+            "Stamina": 75,
+            "AttackSpeed": 12,
+            "Strength": 36,
+            "DroppingItems": [
+              {
+                "Name": "Eldritch Sword",
+                "Description": "A sword imbued with dark energy. +20 strength.",
+                "Value": 90,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 20,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Sword"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Forbidden Library",
+        "LevelOfRoom": 8,
+        "ConnectedRooms": [ "Sanctum Main Hall" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Living Spellbook",
+            "Level": 8,
+            "MaxHealth": 100,
+            "Health": 100,
+            "MaxShield": 10,
+            "Shield": 10,
+            "MaxStamina": 120,
+            "Stamina": 120,
+            "AttackSpeed": 18,
+            "Strength": 24,
+            "DroppingItems": [
+              {
+                "Name": "Arcane Tome",
+                "Description": "Grants +15 strength and +5 attack speed.",
+                "Value": 85,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 15,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 5,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Offhand"
+              }
+            ]
+          }
+        ],
+        "DropedItems": [
+          {
+            "Name": "Ancient Scroll",
+            "Description": "Grants 500 XP when read.",
             "Value": 0,
             "IsStackable": false,
             "IsEquippable": false,
@@ -698,82 +1330,48 @@
         ]
       },
       {
-        "Name": "Forbidden Library",
-        "LevelOfRoom": 8,
-        "ConnectedRooms": [ "Sanctum Main Hall" ],
-        "EnemiesInRoom": [
-          {
-            "Name": "Living Spellbook",
-            "Level": 8,
-            "MaxHealth": 100,
-            "Health": 100,
-            "MaxShield": 5,
-            "Shield": 5,
-            "Stamina": 120,
-            "MaxStamina": 120,
-            "AttackSpeed": 18,
-            "Strength": 20,
-            "DroppingItems": [
-              {
-                "Name": "Arcane Staff",
-                "Description": "+20 Strength.",
-                "Value": 70,
-                "IsStackable": false,
-                "IsEquippable": true,
-                "AttackBonus": 20,
-                "HealthBonus": 0,
-                "StaminaBonus": 0,
-                "ArmorBonus": 0,
-                "AttackSpeedBonus": 0,
-                "HealUPBonus": 0,
-                "TypeOfItem": "Staff"
-              }
-            ]
-          }
-        ],
-        "DropedItems": []
-      },
-      {
         "Name": "Boss Chamber",
         "LevelOfRoom": 10,
         "ConnectedRooms": [ "Sanctum Main Hall" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
         "EnemiesInRoom": [
           {
             "Name": "Eldritch Overlord",
             "Level": 10,
-            "MaxHealth": 250,
-            "Health": 250,
-            "MaxShield": 40,
-            "Shield": 40,
-            "Stamina": 100,
+            "MaxHealth": 300,
+            "Health": 300,
+            "MaxShield": 50,
+            "Shield": 50,
             "MaxStamina": 100,
+            "Stamina": 100,
             "AttackSpeed": 10,
-            "Strength": 40,
+            "Strength": 45,
             "DroppingItems": [
               {
                 "Name": "Overlord's Blade",
-                "Description": "+30 Strength. The ultimate weapon.",
-                "Value": 150,
+                "Description": "The ultimate weapon. +30 strength, +10 attack speed.",
+                "Value": 200,
                 "IsStackable": false,
                 "IsEquippable": true,
                 "AttackBonus": 30,
                 "HealthBonus": 0,
                 "StaminaBonus": 0,
                 "ArmorBonus": 0,
-                "AttackSpeedBonus": 0,
+                "AttackSpeedBonus": 10,
                 "HealUPBonus": 0,
                 "TypeOfItem": "Sword"
               },
               {
                 "Name": "Overlord's Crown",
-                "Description": "+25 Shield, +15 Health.",
-                "Value": 120,
+                "Description": "A crown of immense power. +20 shield, +20 health.",
+                "Value": 180,
                 "IsStackable": false,
                 "IsEquippable": true,
                 "AttackBonus": 0,
-                "HealthBonus": 15,
+                "HealthBonus": 20,
                 "StaminaBonus": 0,
-                "ArmorBonus": 25,
+                "ArmorBonus": 20,
                 "AttackSpeedBonus": 0,
                 "HealUPBonus": 0,
                 "TypeOfItem": "Helmet"

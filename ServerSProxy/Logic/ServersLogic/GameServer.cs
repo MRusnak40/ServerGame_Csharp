@@ -31,8 +31,9 @@ namespace ServerSProxy
            
             classTypeLiekEnum.LoadFromFile().GetAwaiter().GetResult();
             world.LoadPlayers().GetAwaiter().GetResult();
+            world.LoadGameWorld().GetAwaiter().GetResult();
 
-            
+
             _ = world.StartAutoSave();
 
             ServerLoop();
@@ -134,7 +135,7 @@ namespace ServerSProxy
                     {
 
                         //main loop betwwen player and game world 
-
+                        await world.SpawnPlayerAsync(player);
                         await world.GameLoop(player);
 
 
@@ -146,6 +147,7 @@ namespace ServerSProxy
                         {
 
 
+                            await world.SpawnPlayerAsync(player);
 
                             continue;
                         }

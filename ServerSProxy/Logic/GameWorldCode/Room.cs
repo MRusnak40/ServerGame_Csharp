@@ -17,7 +17,8 @@ namespace ServerSProxy.Logic.GameWorldCode
         private int _levelOfRoom;
 
         //lists
-        private List<Room>? _connectedRooms;
+        private List<string>? _connectedRooms;
+
 
         private List<Player>? _playersInRoom;
 
@@ -42,7 +43,7 @@ namespace ServerSProxy.Logic.GameWorldCode
             set { _levelOfRoom = value; }
         }
 
-        public List<Room>? ConnectedRooms
+        public List<string>? ConnectedRooms
         {
             get { return _connectedRooms; }
             set { _connectedRooms = value; }

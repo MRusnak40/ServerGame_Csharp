@@ -27,7 +27,7 @@ namespace ServerSProxy.Logic.GameWorldCode
         // Zámky pro bezpečnou práci se sdílenými zdroji
         private readonly object _accountsLock = new object();
         private static readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);   // pro soubor
-
+        private readonly SemaphoreSlim _roomSemaphore = new SemaphoreSlim(1, 1); //pro synchronizaci přístupu k místnostem (pokud bude potřeba)
         public GameWorld()
         {
             _onlinePlayers = new List<Player>();
@@ -71,17 +71,22 @@ namespace ServerSProxy.Logic.GameWorldCode
             };
         }
 
+
+        // --------------------------------------------------
+        //  SPRÁVA SVETA 
+        // --------------------------------------------------
+
+
         public async Task LoadGameWorld()
         {
             if (File.Exists(pathToJsonGameWorld))
             {
                 string jsonData = await File.ReadAllTextAsync(pathToJsonGameWorld);
-                GameWorld loadedGameWorld = System.Text.Json.JsonSerializer.Deserialize<GameWorld>(jsonData);
-                if (loadedGameWorld != null)
+                var maps = System.Text.Json.JsonSerializer.Deserialize<List<Map>>(jsonData);
+                if (maps != null)
                 {
-                    MapsInGameWorld = loadedGameWorld.MapsInGameWorld;
-                    NumberOfMapsInGameWorld = loadedGameWorld.NumberOfMapsInGameWorld;
-                    OnlinePlayers = loadedGameWorld.OnlinePlayers;
+                    MapsInGameWorld = maps;
+                    NumberOfMapsInGameWorld = maps.Count;
                 }
             }
         }
@@ -93,7 +98,7 @@ namespace ServerSProxy.Logic.GameWorldCode
         }
 
         // --------------------------------------------------
-        //  SPRÁVA HRÁČŮ – načtení / uložení
+        //  SPRÁVA HRACU
         // --------------------------------------------------
         public async Task LoadPlayers()
         {
@@ -143,6 +148,85 @@ namespace ServerSProxy.Logic.GameWorldCode
             }
         }
 
+
+
+
+
+
+
+
+
+
+        public async Task SpawnPlayerAsync(Player player)
+        {
+            // 1. remove player z aktualni mistnosti, pokud je v ni
+            if (player.CurrentRoom != null)
+            {
+                await _roomSemaphore.WaitAsync();
+                try
+                {
+                    player.CurrentRoom.PlayersInRoom?.Remove(player);
+                    player.CurrentRoom = null;
+                }
+                finally
+                {
+                    _roomSemaphore.Release();
+                }
+            }
+
+            // 2. nejnizsi level v celém světě
+            int minLevel = int.MaxValue;
+            foreach (var map in MapsInGameWorld)
+            {
+                if (map.RoomsInMap == null) continue;
+                foreach (var room in map.RoomsInMap)
+                {
+                    if (room.LevelOfRoom < minLevel)
+                        minLevel = room.LevelOfRoom;
+                }
+            }
+
+            // 3. list s nejmensim levelem
+            var candidates = new List<Room>();
+            foreach (var map in MapsInGameWorld)
+            {
+                if (map.RoomsInMap == null) continue;
+                foreach (var room in map.RoomsInMap)
+                {
+                    if (room.LevelOfRoom == minLevel)
+                        candidates.Add(room);
+                }
+            }
+
+            // 4. mistnost s nejmene hraci in
+            int minPlayers = int.MaxValue;
+            foreach (var room in candidates)
+            {
+                int count = room.PlayersInRoom?.Count ?? 0;
+                if (count < minPlayers)
+                    minPlayers = count;
+            }
+
+            var bestRooms = candidates.Where(r => (r.PlayersInRoom?.Count ?? 0) == minPlayers).ToList();
+
+           
+            Room chosen = bestRooms[new Random().Next(bestRooms.Count)];
+
+            
+            await _roomSemaphore.WaitAsync();
+            try
+            {
+                player.CurrentRoom = chosen;
+                if (chosen.PlayersInRoom == null)
+                    chosen.PlayersInRoom = new List<Player>();
+                chosen.PlayersInRoom.Add(player);
+            }
+            finally
+            {
+                _roomSemaphore.Release();
+            }
+        }
+
         // --------------------------------------------------
         //  AUTOSAVE
         // --------------------------------------------------
@@ -188,7 +272,7 @@ namespace ServerSProxy.Logic.GameWorldCode
         }
 
         // --------------------------------------------------
-        //  POMOCNÉ METODY PRO PŘENOS DAT MEZI PAMĚTÍ A ÚČTY
+        //  POMOCNE METODY PRO PRENSO DAT HRACE
         // --------------------------------------------------
         public async Task SetVluesForPlayer(Player player)
         {
@@ -250,7 +334,7 @@ namespace ServerSProxy.Logic.GameWorldCode
         }
 
         // --------------------------------------------------
-        //  PŘIHLÁŠENÍ / REGISTRACE
+        //  REGISTRACE A LOGIN
         // --------------------------------------------------
         public async Task<bool> LogInPlayers(StreamReader reader, StreamWriter writer, Player player)
         {
@@ -317,7 +401,7 @@ namespace ServerSProxy.Logic.GameWorldCode
         }
 
         // --------------------------------------------------
-        //  KONTROLA PŘIPOJENÍ
+        // WIFI CHECK A ODPOJOVANI HRACE
         // --------------------------------------------------
         private async Task<bool> CheckIfPlayerIsConnected(Player player)
         {
@@ -343,7 +427,7 @@ namespace ServerSProxy.Logic.GameWorldCode
         }
 
         // --------------------------------------------------
-        //  VÝBĚR TŘÍDY (volá se jen jednou)
+        //  CLASS SELECTION
         // --------------------------------------------------
         public async Task ChooseClassForPlayer(Player player)
         {
@@ -415,7 +499,7 @@ namespace ServerSProxy.Logic.GameWorldCode
         }
 
         // --------------------------------------------------
-        //  HLAVNÍ HERNÍ SMYČKA
+        //  GAME LOOP
         // --------------------------------------------------
         public async Task GameLoop(Player player)
         {
