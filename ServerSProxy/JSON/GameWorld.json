@@ -1,3 +1,788 @@
 ﻿[
-
+  {
+    "NameOfMap": "Enchanted Forest",
+    "RoomsInMap": [
+      {
+        "Name": "Forest Clearing",
+        "LevelOfRoom": 1,
+        "ConnectedRooms": [ "Ancient Tree", "Mushroom Circle", "Crystal Cave Entrance" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Forest Sprite",
+            "Level": 1,
+            "MaxHealth": 20,
+            "Health": 20,
+            "MaxShield": 0,
+            "Shield": 0,
+            "Stamina": 40,
+            "MaxStamina": 40,
+            "AttackSpeed": 12,
+            "Strength": 6,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": [
+          {
+            "Name": "Health Potion",
+            "Description": "Restores 20 HP.",
+            "Value": 5,
+            "IsStackable": true,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 20,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 20,
+            "TypeOfItem": "Potion"
+          }
+        ]
+      },
+      {
+        "Name": "Ancient Tree",
+        "LevelOfRoom": 1,
+        "ConnectedRooms": [ "Forest Clearing", "Elven Outpost" ],
+        "EnemiesInRoom": [],
+        "DropedItems": [
+          {
+            "Name": "Wooden Sword",
+            "Description": "A simple blade. +3 Strength.",
+            "Value": 10,
+            "IsStackable": false,
+            "IsEquippable": true,
+            "AttackBonus": 3,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Sword"
+          }
+        ]
+      },
+      {
+        "Name": "Mushroom Circle",
+        "LevelOfRoom": 1,
+        "ConnectedRooms": [ "Forest Clearing" ],
+        "EnemiesInRoom": [],
+        "DropedItems": [
+          {
+            "Name": "Mushroom",
+            "Description": "A glowing mushroom. Restores 10 HP.",
+            "Value": 2,
+            "IsStackable": true,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 10,
+            "TypeOfItem": "Consumable"
+          }
+        ]
+      },
+      {
+        "Name": "Elven Outpost",
+        "LevelOfRoom": 2,
+        "ConnectedRooms": [ "Ancient Tree", "Crystal Cave Entrance" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Elven Scout",
+            "Level": 2,
+            "MaxHealth": 30,
+            "Health": 30,
+            "MaxShield": 5,
+            "Shield": 5,
+            "Stamina": 50,
+            "MaxStamina": 50,
+            "AttackSpeed": 14,
+            "Strength": 10,
+            "DroppingItems": [
+              {
+                "Name": "Leather Armor",
+                "Description": "+5 Shield.",
+                "Value": 15,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 5,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Armor"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Crystal Cave Entrance",
+        "LevelOfRoom": 2,
+        "ConnectedRooms": [ "Forest Clearing", "Elven Outpost", "Crystal Cavern" ],
+        "EnemiesInRoom": [],
+        "DropedItems": [
+          {
+            "Name": "Crystal Shard",
+            "Description": "A sharp crystal. +4 Attack.",
+            "Value": 8,
+            "IsStackable": false,
+            "IsEquippable": true,
+            "AttackBonus": 4,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Dagger"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "NameOfMap": "Crystal Caves",
+    "RoomsInMap": [
+      {
+        "Name": "Crystal Cavern",
+        "LevelOfRoom": 2,
+        "ConnectedRooms": [ "Crystal Cave Entrance", "Glowing Chamber", "Miners' Camp" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Crystal Bat",
+            "Level": 2,
+            "MaxHealth": 25,
+            "Health": 25,
+            "MaxShield": 0,
+            "Shield": 0,
+            "Stamina": 60,
+            "MaxStamina": 60,
+            "AttackSpeed": 16,
+            "Strength": 8,
+            "DroppingItems": [
+              {
+                "Name": "Bat Wing",
+                "Description": "Increases stamina by 10.",
+                "Value": 4,
+                "IsStackable": false,
+                "IsEquippable": false,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 10,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Consumable"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Glowing Chamber",
+        "LevelOfRoom": 3,
+        "ConnectedRooms": [ "Crystal Cavern", "Deep Crystal Lake" ],
+        "EnemiesInRoom": [],
+        "DropedItems": [
+          {
+            "Name": "Glowing Gem",
+            "Description": "Empowers your weapon. +6 Strength.",
+            "Value": 20,
+            "IsStackable": false,
+            "IsEquippable": true,
+            "AttackBonus": 6,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Rune"
+          }
+        ]
+      },
+      {
+        "Name": "Miners' Camp",
+        "LevelOfRoom": 2,
+        "ConnectedRooms": [ "Crystal Cavern", "Deep Crystal Lake", "Swamp Path" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Crystal Golem",
+            "Level": 3,
+            "MaxHealth": 50,
+            "Health": 50,
+            "MaxShield": 10,
+            "Shield": 10,
+            "Stamina": 30,
+            "MaxStamina": 30,
+            "AttackSpeed": 8,
+            "Strength": 15,
+            "DroppingItems": [
+              {
+                "Name": "Crystal Shield",
+                "Description": "+15 Shield.",
+                "Value": 25,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 15,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Shield"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Deep Crystal Lake",
+        "LevelOfRoom": 3,
+        "ConnectedRooms": [ "Glowing Chamber", "Miners' Camp", "Swamp Path" ],
+        "EnemiesInRoom": [],
+        "DropedItems": [
+          {
+            "Name": "Lake Water",
+            "Description": "Heals 30 HP.",
+            "Value": 6,
+            "IsStackable": true,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 30,
+            "TypeOfItem": "Potion"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "NameOfMap": "Shadow Swamp",
+    "RoomsInMap": [
+      {
+        "Name": "Swamp Path",
+        "LevelOfRoom": 3,
+        "ConnectedRooms": [ "Miners' Camp", "Deep Crystal Lake", "Witch's Hut", "Misty Bog" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Swamp Serpent",
+            "Level": 3,
+            "MaxHealth": 45,
+            "Health": 45,
+            "MaxShield": 5,
+            "Shield": 5,
+            "Stamina": 50,
+            "MaxStamina": 50,
+            "AttackSpeed": 13,
+            "Strength": 12,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Witch's Hut",
+        "LevelOfRoom": 4,
+        "ConnectedRooms": [ "Swamp Path" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Swamp Witch",
+            "Level": 4,
+            "MaxHealth": 40,
+            "Health": 40,
+            "MaxShield": 0,
+            "Shield": 0,
+            "Stamina": 80,
+            "MaxStamina": 80,
+            "AttackSpeed": 10,
+            "Strength": 18,
+            "DroppingItems": [
+              {
+                "Name": "Witch's Staff",
+                "Description": "+10 Strength.",
+                "Value": 35,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 10,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Staff"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Misty Bog",
+        "LevelOfRoom": 4,
+        "ConnectedRooms": [ "Swamp Path", "Forgotten Graveyard" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Bog Monster",
+            "Level": 4,
+            "MaxHealth": 60,
+            "Health": 60,
+            "MaxShield": 10,
+            "Shield": 10,
+            "Stamina": 60,
+            "MaxStamina": 60,
+            "AttackSpeed": 9,
+            "Strength": 16,
+            "DroppingItems": [
+              {
+                "Name": "Bog Slime",
+                "Description": "Restores 40 HP.",
+                "Value": 8,
+                "IsStackable": true,
+                "IsEquippable": false,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 40,
+                "TypeOfItem": "Potion"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Forgotten Graveyard",
+        "LevelOfRoom": 4,
+        "ConnectedRooms": [ "Misty Bog", "Molten Fissure" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Skeleton Warrior",
+            "Level": 4,
+            "MaxHealth": 55,
+            "Health": 55,
+            "MaxShield": 15,
+            "Shield": 15,
+            "Stamina": 40,
+            "MaxStamina": 40,
+            "AttackSpeed": 11,
+            "Strength": 14,
+            "DroppingItems": [
+              {
+                "Name": "Iron Sword",
+                "Description": "+7 Strength.",
+                "Value": 22,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 7,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Sword"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      }
+    ]
+  },
+  {
+    "NameOfMap": "Molten Depths",
+    "RoomsInMap": [
+      {
+        "Name": "Molten Fissure",
+        "LevelOfRoom": 5,
+        "ConnectedRooms": [ "Forgotten Graveyard", "Fire Lake", "Magma Forge" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Fire Elemental",
+            "Level": 5,
+            "MaxHealth": 70,
+            "Health": 70,
+            "MaxShield": 10,
+            "Shield": 10,
+            "Stamina": 70,
+            "MaxStamina": 70,
+            "AttackSpeed": 15,
+            "Strength": 20,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Fire Lake",
+        "LevelOfRoom": 5,
+        "ConnectedRooms": [ "Molten Fissure", "Dragon's Lair" ],
+        "EnemiesInRoom": [],
+        "DropedItems": [
+          {
+            "Name": "Fire Essence",
+            "Description": "+15 Strength for 1 fight.",
+            "Value": 15,
+            "IsStackable": false,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Consumable"
+          }
+        ]
+      },
+      {
+        "Name": "Magma Forge",
+        "LevelOfRoom": 5,
+        "ConnectedRooms": [ "Molten Fissure", "Dragon's Lair" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Magma Golem",
+            "Level": 5,
+            "MaxHealth": 90,
+            "Health": 90,
+            "MaxShield": 20,
+            "Shield": 20,
+            "Stamina": 50,
+            "MaxStamina": 50,
+            "AttackSpeed": 7,
+            "Strength": 25,
+            "DroppingItems": [
+              {
+                "Name": "Magma Armor",
+                "Description": "+20 Shield.",
+                "Value": 40,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 20,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Armor"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Dragon's Lair",
+        "LevelOfRoom": 6,
+        "ConnectedRooms": [ "Fire Lake", "Magma Forge", "Cloud Bridge" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Young Dragon",
+            "Level": 6,
+            "MaxHealth": 120,
+            "Health": 120,
+            "MaxShield": 25,
+            "Shield": 25,
+            "Stamina": 80,
+            "MaxStamina": 80,
+            "AttackSpeed": 12,
+            "Strength": 30,
+            "DroppingItems": [
+              {
+                "Name": "Dragon Scale",
+                "Description": "+25 Shield.",
+                "Value": 60,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 25,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Shield"
+              },
+              {
+                "Name": "Dragon Fang Sword",
+                "Description": "+15 Strength.",
+                "Value": 55,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 15,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Sword"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      }
+    ]
+  },
+  {
+    "NameOfMap": "Sky Citadel",
+    "RoomsInMap": [
+      {
+        "Name": "Cloud Bridge",
+        "LevelOfRoom": 6,
+        "ConnectedRooms": [ "Dragon's Lair", "Sky Plaza", "Wind Tower" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Cloud Giant",
+            "Level": 6,
+            "MaxHealth": 100,
+            "Health": 100,
+            "MaxShield": 30,
+            "Shield": 30,
+            "Stamina": 60,
+            "MaxStamina": 60,
+            "AttackSpeed": 10,
+            "Strength": 22,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Sky Plaza",
+        "LevelOfRoom": 6,
+        "ConnectedRooms": [ "Cloud Bridge", "Citadel Armory" ],
+        "EnemiesInRoom": [],
+        "DropedItems": [
+          {
+            "Name": "Blessed Potion",
+            "Description": "Restores 50 HP.",
+            "Value": 10,
+            "IsStackable": true,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 50,
+            "TypeOfItem": "Potion"
+          }
+        ]
+      },
+      {
+        "Name": "Wind Tower",
+        "LevelOfRoom": 6,
+        "ConnectedRooms": [ "Cloud Bridge", "Citadel Armory" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Wind Elemental",
+            "Level": 7,
+            "MaxHealth": 80,
+            "Health": 80,
+            "MaxShield": 15,
+            "Shield": 15,
+            "Stamina": 90,
+            "MaxStamina": 90,
+            "AttackSpeed": 20,
+            "Strength": 18,
+            "DroppingItems": [
+              {
+                "Name": "Wind Boots",
+                "Description": "+10 Attack Speed.",
+                "Value": 30,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 10,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Boots"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Citadel Armory",
+        "LevelOfRoom": 7,
+        "ConnectedRooms": [ "Sky Plaza", "Wind Tower", "Eldritch Gate" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Armory Guard",
+            "Level": 7,
+            "MaxHealth": 110,
+            "Health": 110,
+            "MaxShield": 25,
+            "Shield": 25,
+            "Stamina": 70,
+            "MaxStamina": 70,
+            "AttackSpeed": 12,
+            "Strength": 25,
+            "DroppingItems": [
+              {
+                "Name": "Citadel Armor",
+                "Description": "+30 Shield.",
+                "Value": 65,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 30,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Armor"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      }
+    ]
+  },
+  {
+    "NameOfMap": "Eldritch Sanctum",
+    "RoomsInMap": [
+      {
+        "Name": "Eldritch Gate",
+        "LevelOfRoom": 7,
+        "ConnectedRooms": [ "Citadel Armory", "Sanctum Main Hall" ],
+        "EnemiesInRoom": [],
+        "DropedItems": []
+      },
+      {
+        "Name": "Sanctum Main Hall",
+        "LevelOfRoom": 8,
+        "ConnectedRooms": [ "Eldritch Gate", "Forbidden Library", "Boss Chamber" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Eldritch Horror",
+            "Level": 8,
+            "MaxHealth": 130,
+            "Health": 130,
+            "MaxShield": 20,
+            "Shield": 20,
+            "Stamina": 90,
+            "MaxStamina": 90,
+            "AttackSpeed": 14,
+            "Strength": 28,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": [
+          {
+            "Name": "Eldritch Tome",
+            "Description": "Grants 500 XP.",
+            "Value": 0,
+            "IsStackable": false,
+            "IsEquippable": false,
+            "AttackBonus": 0,
+            "HealthBonus": 0,
+            "StaminaBonus": 0,
+            "ArmorBonus": 0,
+            "AttackSpeedBonus": 0,
+            "HealUPBonus": 0,
+            "TypeOfItem": "Quest"
+          }
+        ]
+      },
+      {
+        "Name": "Forbidden Library",
+        "LevelOfRoom": 8,
+        "ConnectedRooms": [ "Sanctum Main Hall" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Living Spellbook",
+            "Level": 8,
+            "MaxHealth": 100,
+            "Health": 100,
+            "MaxShield": 5,
+            "Shield": 5,
+            "Stamina": 120,
+            "MaxStamina": 120,
+            "AttackSpeed": 18,
+            "Strength": 20,
+            "DroppingItems": [
+              {
+                "Name": "Arcane Staff",
+                "Description": "+20 Strength.",
+                "Value": 70,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 20,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Staff"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Boss Chamber",
+        "LevelOfRoom": 10,
+        "ConnectedRooms": [ "Sanctum Main Hall" ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Eldritch Overlord",
+            "Level": 10,
+            "MaxHealth": 250,
+            "Health": 250,
+            "MaxShield": 40,
+            "Shield": 40,
+            "Stamina": 100,
+            "MaxStamina": 100,
+            "AttackSpeed": 10,
+            "Strength": 40,
+            "DroppingItems": [
+              {
+                "Name": "Overlord's Blade",
+                "Description": "+30 Strength. The ultimate weapon.",
+                "Value": 150,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 30,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Sword"
+              },
+              {
+                "Name": "Overlord's Crown",
+                "Description": "+25 Shield, +15 Health.",
+                "Value": 120,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 15,
+                "StaminaBonus": 0,
+                "ArmorBonus": 25,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Helmet"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      }
+    ]
+  }
 ]

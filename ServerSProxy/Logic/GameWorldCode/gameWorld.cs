@@ -4,33 +4,29 @@ using ServerSProxy.Logic.PlayerCode.Items;
 using ServerSProxy.Logic.ServersLogic;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using System.Xml.Linq;
 
 namespace ServerSProxy.Logic.GameWorldCode
 {
     internal class GameWorld
     {
-
-
-
         List<Map>? _mapsInGameWorld;
-
         private int _numberOfMapsInGameWorld;
-
         private List<Player> _onlinePlayers;
         Login login = new Login();
-
 
         private string pathToJsonPlayerList = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "JSON", "Players.json");
         private string pathToJsonGameWorld = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "JSON", "GameWorld.json");
 
-        // public bool gameRunning = true;
-
         private List<Player> _accounts;
+
+        // Zámky pro bezpečnou práci se sdílenými zdroji
+        private readonly object _accountsLock = new object();
+        private static readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);   // pro soubor
 
         public GameWorld()
         {
@@ -38,46 +34,45 @@ namespace ServerSProxy.Logic.GameWorldCode
             _accounts = new List<Player>();
             _mapsInGameWorld = new List<Map>();
         }
+
+        // Vlastnosti – Accounts obalujeme jen pro jistotu, ale všechna práce s ním je uvnitř locků
         public List<Player> Accounts
         {
-            get { return _accounts; }
-            set { _accounts = value; }
+            get { lock (_accountsLock) return _accounts; }
+            set { lock (_accountsLock) _accounts = value; }
         }
 
         public List<Map>? MapsInGameWorld
         {
-            get { return _mapsInGameWorld; }
-            set { _mapsInGameWorld = value; }
+            get => _mapsInGameWorld;
+            set => _mapsInGameWorld = value;
         }
 
         public int NumberOfMapsInGameWorld
         {
-            get { return _numberOfMapsInGameWorld; }
-            set { _numberOfMapsInGameWorld = value; }
+            get => _numberOfMapsInGameWorld;
+            set => _numberOfMapsInGameWorld = value;
         }
 
         public List<Player> OnlinePlayers
         {
-            get { return _onlinePlayers; }
-            set { _onlinePlayers = value; }
+            get => _onlinePlayers;
+            set => _onlinePlayers = value;
         }
 
         private Dictionary<string, Command> CreateCommands(Player player)
         {
             return new Dictionary<string, Command>()
             {
-                { "exit",new ExitComm(player, this) },
+                { "exit", new ExitComm(player, this) },
                 { "chat", new Chat(player, this) },
                 { "help", new Help(player, this) },
+                { "stats", new ShowStats(player, this) }
             };
         }
 
-
         public async Task LoadGameWorld()
         {
-            // Implementace načítání světa z JSON souboru
-            // Cesta k JSON souboru
-
             if (File.Exists(pathToJsonGameWorld))
             {
                 string jsonData = await File.ReadAllTextAsync(pathToJsonGameWorld);
@@ -91,63 +86,69 @@ namespace ServerSProxy.Logic.GameWorldCode
             }
         }
 
-        //Gameworld list=> mapsInGame world je to cela mapa cela hra
         public async Task SaveGameWorld()
         {
-            // Implementace ukládání světa do JSON souboru
-            // Cesta k JSON souboru
-
             string jsonData = System.Text.Json.JsonSerializer.Serialize(MapsInGameWorld);
             await File.WriteAllTextAsync(pathToJsonGameWorld, jsonData);
         }
 
-
-
-
-
-
-        //save players je postarano jeste to pridat ke smrti hrace
+        // --------------------------------------------------
+        //  SPRÁVA HRÁČŮ – načtení / uložení
+        // --------------------------------------------------
         public async Task LoadPlayers()
         {
-            if (!File.Exists(pathToJsonPlayerList))
+            string jsonData = null;
+            if (File.Exists(pathToJsonPlayerList))
             {
-                Accounts = new List<Player>();
-                return;
+                jsonData = await File.ReadAllTextAsync(pathToJsonPlayerList);
             }
-
-            string jsonData = await File.ReadAllTextAsync(pathToJsonPlayerList);
 
             if (string.IsNullOrWhiteSpace(jsonData))
             {
-                Accounts = new List<Player>();
+                lock (_accountsLock) _accounts = new List<Player>();
                 return;
             }
 
             try
             {
-                Accounts = System.Text.Json.JsonSerializer.Deserialize<List<Player>>(jsonData)
+                var list = System.Text.Json.JsonSerializer.Deserialize<List<Player>>(jsonData)
                            ?? new List<Player>();
+                lock (_accountsLock) _accounts = list;
             }
             catch
             {
-                Accounts = new List<Player>();
+                lock (_accountsLock) _accounts = new List<Player>();
             }
         }
 
         public async Task SavePlayersList()
         {
-            if (Accounts == null) Accounts = new List<Player>();
+            List<Player> snapshot;
+            lock (_accountsLock)
+            {
+                snapshot = new List<Player>(_accounts);   // kopie pro bezpečnou serializaci
+            }
 
-            string jsonData = System.Text.Json.JsonSerializer.Serialize(Accounts);
-            await File.WriteAllTextAsync(pathToJsonPlayerList, jsonData);
+            string jsonData = System.Text.Json.JsonSerializer.Serialize(snapshot);
+
+            // Asynchronní zápis do souboru s použitím semaforu, aby nedošlo k souběhu
+            await _fileSemaphore.WaitAsync();
+            try
+            {
+                await File.WriteAllTextAsync(pathToJsonPlayerList, jsonData);
+            }
+            finally
+            {
+                _fileSemaphore.Release();
+            }
         }
 
-
+        // --------------------------------------------------
+        //  AUTOSAVE
+        // --------------------------------------------------
         public async Task StartAutoSave()
         {
             using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
-
-            // Smyčka běží navždy na pozadí
             while (await timer.WaitForNextTickAsync())
             {
                 try
@@ -165,10 +166,8 @@ namespace ServerSProxy.Logic.GameWorldCode
         public async Task PlayerAutoSave(Player player, CancellationToken token)
         {
             using PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
-
             try
             {
-
                 while (!token.IsCancellationRequested && await timer.WaitForNextTickAsync(token))
                 {
                     try
@@ -184,93 +183,81 @@ namespace ServerSProxy.Logic.GameWorldCode
             }
             catch (OperationCanceledException)
             {
-
                 Console.WriteLine($"[SYSTEM] Autosave pro hráče {player.Name} byl korektně ukončen.");
             }
         }
 
-
-
-
-
-
-
+        // --------------------------------------------------
+        //  POMOCNÉ METODY PRO PŘENOS DAT MEZI PAMĚTÍ A ÚČTY
+        // --------------------------------------------------
         public async Task SetVluesForPlayer(Player player)
         {
-            foreach (Player p in Accounts)
+            lock (_accountsLock)
             {
-                if (p.Name == player.Name)
+                foreach (Player p in _accounts)
                 {
-                    player.Level = p.Level;
-                    player.Experience = p.Experience;
-                    player.Health = p.Health;
-                    player.MaxHealth = p.MaxHealth;
-                    player.Shield = p.Shield;
-                    player.MaxShield = p.MaxShield;
-                    player.Stamina = p.Stamina;
-                    player.MaxStamina = p.MaxStamina;
-                    player.Strength = p.Strength;
-                    player.AttackSpeed = p.AttackSpeed;
-                    player.Coins = p.Coins;
-                    player.Class = p.Class;
-                    player.Inventory = p.Inventory;
-                    player.ActiveQuests = p.ActiveQuests;
-                    player.IsAlive = p.IsAlive;
-                    //player.LastActive = p.LastActive;
-                    break;
+                    if (p.Name == player.Name)
+                    {
+                        player.Level = p.Level;
+                        player.Experience = p.Experience;
+                        player.Health = p.Health;
+                        player.MaxHealth = p.MaxHealth;
+                        player.Shield = p.Shield;
+                        player.MaxShield = p.MaxShield;
+                        player.Stamina = p.Stamina;
+                        player.MaxStamina = p.MaxStamina;
+                        player.Strength = p.Strength;
+                        player.AttackSpeed = p.AttackSpeed;
+                        player.Coins = p.Coins;
+                        player.Class = p.Class;
+                        player.Inventory = p.Inventory;
+                        player.ActiveQuests = p.ActiveQuests;
+                        player.IsAlive = p.IsAlive;
+                        break;
+                    }
                 }
             }
         }
-
 
         public async Task UpadateVluesForPlayerTOList(Player player)
         {
-            foreach (Player p in Accounts)
+            lock (_accountsLock)
             {
-                if (p.Name == player.Name)
+                foreach (Player p in _accounts)
                 {
-                    p.Level = player.Level;
-                    p.Experience = player.Experience;
-                    p.Health = player.Health;
-                    p.MaxHealth = player.MaxHealth;
-                    p.Shield = player.Shield;
-                    p.MaxShield = player.MaxShield;
-                    p.Stamina = player.Stamina;
-                    p.MaxStamina = player.MaxStamina;
-                    p.Strength = player.Strength;
-                    p.AttackSpeed = player.AttackSpeed;
-                    p.Coins = player.Coins;
-                    p.Class = player.Class;
-                    p.Inventory = player.Inventory;
-                    p.ActiveQuests = player.ActiveQuests;
-                    p.IsAlive = player.IsAlive;
-                    p.LastActive = player.LastActive;
-                    break;
+                    if (p.Name == player.Name)
+                    {
+                        p.Level = player.Level;
+                        p.Experience = player.Experience;
+                        p.Health = player.Health;
+                        p.MaxHealth = player.MaxHealth;
+                        p.Shield = player.Shield;
+                        p.MaxShield = player.MaxShield;
+                        p.Stamina = player.Stamina;
+                        p.MaxStamina = player.MaxStamina;
+                        p.Strength = player.Strength;
+                        p.AttackSpeed = player.AttackSpeed;
+                        p.Coins = player.Coins;
+                        p.Class = player.Class;
+                        p.Inventory = player.Inventory;
+                        p.ActiveQuests = player.ActiveQuests;
+                        p.IsAlive = player.IsAlive;
+                        p.LastActive = player.LastActive;
+                        break;
+                    }
                 }
             }
         }
 
-
-        //napojeni na connected pro hrace jinak ho to vyhodi
-
-
-
+        // --------------------------------------------------
+        //  PŘIHLÁŠENÍ / REGISTRACE
+        // --------------------------------------------------
         public async Task<bool> LogInPlayers(StreamReader reader, StreamWriter writer, Player player)
         {
-
-
-
-
-
             player.Reader = reader;
             player.Writer = writer;
 
-
-            await LoadPlayers();
-
-
             WriteToConsole.TextToPlayer(player, "\n Welcome back to the game! Please enter your game name:");
-
             string name = await WriteToConsole.TakeInput(player);
 
             WriteToConsole.TextToPlayer(player, "*-----------------------------* \n Please enter your login password:");
@@ -279,11 +266,9 @@ namespace ServerSProxy.Logic.GameWorldCode
             if (await login.VerifyPassword(name, password))
             {
                 WriteToConsole.TextToPlayer(player, "*----------------------------------*\n Login successful! Welcome back," + name + " ! \n *---------------------------------------------* ");
-
                 player.Name = name;
                 await SetVluesForPlayer(player);
 
-                // data missing save
                 if (string.IsNullOrEmpty(player.Class))
                 {
                     await ChooseClassForPlayer(player);
@@ -293,166 +278,47 @@ namespace ServerSProxy.Logic.GameWorldCode
             }
             else
             {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 WriteToConsole.TextToPlayer(player, "\n Incorrect name or password for LOGIN. Do you want to create a account? (yes/no)");
-
                 string response = await WriteToConsole.TakeInput(player);
 
                 if (response.ToLower() == "yes")
                 {
-
-
-
-
-
-
-
                     bool correct = false;
-
-
                     while (!correct)
                     {
                         await WriteToConsole.TextToPlayer(player, $"Do you want to change your name from {name} ? (yes/no)");
-
                         string change = await WriteToConsole.TakeInput(player);
-
-
                         if (change.ToLower() == "yes")
                         {
-
-
                             WriteToConsole.TextToPlayer(player, $"Zadej jine jmeno:");
-
                             name = await WriteToConsole.TakeInput(player);
-
                             await WriteToConsole.TextToPlayer(player, "Zadej heslo:");
                             password = await WriteToConsole.TakeInput(player);
-
                         }
 
-
-
                         string accIn = await login.CreateAcc(name, password);
-
                         await WriteToConsole.TextToPlayer(player, accIn);
-
-
-
-
 
                         if (accIn == "ok")
                         {
-
-
-
-
-
-
-
-
-                            //PRIDAT SEM EFAULTNI HODNOTY NEBO POMOCI METODY VYBRAT CLASS KTEROU BUDE
-                            //ulozit do seznamu muze nastat chybe ze hrac se odpoji driv nez se ulozi do seznamu i hrac v tom pripade udelat moznost odstrannei uctu pokud zna jmeno i heslo
-
-                            /*
                             player.Name = name;
-                            player.Health = 100;
-                            player.MaxHealth = 100;
-                            player.Shield = 50;
-                            player.MaxShield = 50;
-                            player.Stamina = 100;
-                            player.MaxStamina = 100;
-                            player.Strength = 10;
-                            player.AttackSpeed = 10;
-                            player.IsAlive = true;
-                            player.Coins = 0;
-                            */
-                            player.Name = name;
-
                             await ChooseClassForPlayer(player);
-
-
-
-
                             await WriteToConsole.TextToPlayer(player, $"SUSCESSFULLY REGISTERED IN {name}");
-
-
-
-
-
                             correct = true;
-
-                            Accounts.Add(player);
-
+                            lock (_accountsLock) _accounts.Add(player);
                             await SavePlayersList();
-
-
                             return true;
-
                         }
-                        /*
-                        WriteToConsole.TextToPlayer(player, $"Zkus jinou nez {name}");
-
-                        name = await WriteToConsole.TakeInput(player);
-
-                        await WriteToConsole.TextToPlayer(player, "Zadej heslo:");
-                        password = await WriteToConsole.TakeInput(player);
-                        */
                     }
-
-
                     return true;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 }
-
                 return false;
             }
-
-
-
-
-
         }
+
+        // --------------------------------------------------
+        //  KONTROLA PŘIPOJENÍ
+        // --------------------------------------------------
         private async Task<bool> CheckIfPlayerIsConnected(Player player)
         {
             try
@@ -467,7 +333,6 @@ namespace ServerSProxy.Logic.GameWorldCode
             }
         }
 
-
         public async Task RemoveDisconnectedPlayer(Player player)
         {
             if (!await CheckIfPlayerIsConnected(player))
@@ -477,13 +342,12 @@ namespace ServerSProxy.Logic.GameWorldCode
             }
         }
 
-
+        // --------------------------------------------------
+        //  VÝBĚR TŘÍDY (volá se jen jednou)
+        // --------------------------------------------------
         public async Task ChooseClassForPlayer(Player player)
         {
-
-
             bool validSelection = false;
-
 
             if (ClassTypeListPlayer.AvailableClasses.Count == 0)
             {
@@ -491,9 +355,9 @@ namespace ServerSProxy.Logic.GameWorldCode
                 WriteToConsole.TextToPlayer(player, "Bro cant cook even easy code. Please contact the administrator .");
                 return;
             }
+
             while (!validSelection)
             {
-
                 StringBuilder menu = new StringBuilder();
                 menu.AppendLine("\n╔════════════════════════════════════════════════════════════╗");
                 menu.AppendLine("║                ✨ Choose the class ✨                      ║");
@@ -510,33 +374,21 @@ namespace ServerSProxy.Logic.GameWorldCode
                 }
 
                 menu.AppendLine("\n  Type the ID of the class you want to choose:");
-
                 await WriteToConsole.TextToPlayer(player, menu.ToString());
-
 
                 string choice = await WriteToConsole.TakeInput(player);
                 choice = choice?.Trim().ToLower();
 
-
                 if (!string.IsNullOrEmpty(choice) && ClassTypeListPlayer.AvailableClasses.TryGetValue(choice, out var template))
                 {
-
-
-
-
-
                     player.IsAlive = true;
                     player.Coins = 0;
                     player.Level = 1;
                     player.IsInCombat = false;
                     player.Experience = 0;
-
                     player.Inventory = new Inventory(new List<Item>(), new List<Item>(), 5);
-
                     player.ActiveQuests = new List<Quest>();
-
                     player.IsKillable = true;
-
                     player.Class = template.DisplayName;
                     player.MaxHealth = template.BaseHealth;
                     player.Health = template.BaseHealth;
@@ -547,84 +399,85 @@ namespace ServerSProxy.Logic.GameWorldCode
                     player.Strength = template.BaseStrength;
                     player.AttackSpeed = template.BaseAttackSpeed;
 
-
-
-                    string confirmMsg = $"\n✨ Nice choice! From now on, you are: {template.DisplayName} ✨\n";
+                    string confirmMsg = $"\n Nice choice! From now on, you are: {template.DisplayName} ✨\n";
                     await WriteToConsole.TextToPlayer(player, confirmMsg);
+
+                    await UpadateVluesForPlayerTOList(player);
+                    await SavePlayersList();
 
                     validSelection = true;
                 }
                 else
                 {
-                    await WriteToConsole.TextToPlayer(player, "\n❌ Invalid choice! Please try again and enter the class ID correctly.");
+                    await WriteToConsole.TextToPlayer(player, "\n Invalid choice! Please try again and enter the class ID correctly.");
                 }
-
-
-
             }
         }
 
+        // --------------------------------------------------
+        //  HLAVNÍ HERNÍ SMYČKA
+        // --------------------------------------------------
         public async Task GameLoop(Player player)
         {
-
             bool gameRunning = true;
-
-            string input;
-
             var commands = CreateCommands(player);
-
-
-
 
             while (gameRunning)
             {
                 player.LastActive = DateTime.Now;
+
                 if (!player.IsAlive)
                 {
-                    WriteToConsole.TextToPlayer(player, "You are dead. Please wait for retturning to lobby...");
+                    WriteToConsole.TextToPlayer(player, "You are dead. Please wait for returning to lobby...");
                     await Task.Delay(5000);
+
+                    await SetVluesForPlayer(player);
+
+                    if (string.IsNullOrEmpty(player.Class))
+                    {
+                        await ChooseClassForPlayer(player);
+                    }
+
                     player.IsAlive = true;
                     player.Health = player.MaxHealth;
-                    WriteToConsole.TextToPlayer(player, "You are in lobby. Be careful next time!");
+                    player.Shield = player.MaxShield;
+                    player.Stamina = player.MaxStamina;
 
+                    await UpadateVluesForPlayerTOList(player);
+
+                    WriteToConsole.TextToPlayer(player, "You are in lobby. Be careful next time!");
                     gameRunning = false;
                     return;
                 }
 
-                if (player == null)
-                {
-
-
-                    WriteToConsole.TextToPlayer(player, "YOUR ACCOUNT IS BROKEN CHOOSE YOUR CLASS AGAIN");
-
-                    ChooseClassForPlayer(player);
-
-                }
-
-
                 if (player.Health <= 0)
                 {
                     player.IsAlive = false;
+                    continue;
                 }
 
+                /*
 
                 WriteToConsole.TextToPlayer(player, "\n---------------------------------------------");
                 WriteToConsole.TextToPlayer(player, $"Player: {player.Name} | Class: {player.Class} \n" +
                     $" Level: {player.Level} | HP: {player.Health}/{player.MaxHealth} \n" +
                     $" Shields: {player.Shield}/{player.MaxShield} | Stamina: {player.Stamina}/{player.MaxStamina} \n " +
                     $" Strength: {player.Strength} | Attack Speed: {player.AttackSpeed} | Coins: {player.Coins}");
-
-
                 WriteToConsole.TextToPlayer(player, "\n---------------------------------------------");
-
-
                 WriteToConsole.TextToPlayer(player, "\nEnter command (type 'help' for a list of commands): ");
 
-                input = await WriteToConsole.TakeInput(player);
 
+                */
+
+
+
+
+
+
+                //command processing
+
+                string input = await WriteToConsole.TakeInput(player);
                 string commandKey = input.Split(' ')[0].ToLower();
-
-
 
                 if (commands.ContainsKey(commandKey))
                 {
@@ -634,36 +487,7 @@ namespace ServerSProxy.Logic.GameWorldCode
                 {
                     WriteToConsole.TextToPlayer(player, "Unknown command. Please try again.");
                 }
-
-
-
-
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         }
-
-
-
     }
 }

@@ -18,10 +18,12 @@ namespace ServerSProxy.Logic.Commands
             sb.AppendLine(" chat     – Enter chat mode");
             sb.AppendLine(" exit     – Leave the game");
             sb.AppendLine(" help     – Show this help");
-            // Sem můžeš přidat další, až je implementuješ:
+            sb.AppendLine(" stats    – Show your stats");
+            
             // sb.AppendLine(" move     – Move to another room");
             // sb.AppendLine(" pickup   – Pick up an item");
             // sb.AppendLine(" fight    – Fight an NPC");
+            // sb.AppendLine(" playerFight    – Fight a player");
             // sb.AppendLine(" trade    – Trade with another player");
             sb.AppendLine("═══════════════════════════════════════");
 

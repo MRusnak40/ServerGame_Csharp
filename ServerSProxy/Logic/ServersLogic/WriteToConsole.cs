@@ -19,9 +19,11 @@ namespace ServerSProxy.Logic.ServersLogic
         */
 
         // vsem hracum zprava
-        public static  async Task BroadcastAll(string message, List<Player> _activePlayers)
+        public static async Task BroadcastAll(string message, List<Player> _activePlayers)
         {
-            foreach (Player player in _activePlayers)
+            
+            var players = _activePlayers.ToArray();
+            foreach (Player player in players)
             {
                 await player.Writer.WriteLineAsync(message);
             }

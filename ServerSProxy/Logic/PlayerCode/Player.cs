@@ -16,7 +16,10 @@ namespace ServerSProxy.Logic.PlayerCode
 
         //basic info
         private string _name;
+
+        [JsonIgnore]
         private Room _currentRoom;
+
         private string _class;
         private bool _isAlive; //is alive or not, if not, cant do anything, but can be revived
         private bool _isInCombat;//cant be fight with two people at the same time

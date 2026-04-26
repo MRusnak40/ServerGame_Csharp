@@ -28,12 +28,12 @@ namespace ServerSProxy
             myServer.Start();
             isRunning = true;
 
-            //auto save player
-            _ = world.StartAutoSave();
-            //load class types
+           
             classTypeLiekEnum.LoadFromFile().GetAwaiter().GetResult();
+            world.LoadPlayers().GetAwaiter().GetResult();
 
-
+            
+            _ = world.StartAutoSave();
 
             ServerLoop();
         }

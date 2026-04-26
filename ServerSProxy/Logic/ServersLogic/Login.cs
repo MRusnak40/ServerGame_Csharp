@@ -1,8 +1,9 @@
-﻿using ServerSProxy.Logic.PlayerCode;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ServerSProxy.Logic.ServersLogic
@@ -10,18 +11,27 @@ namespace ServerSProxy.Logic.ServersLogic
     internal class Login
     {
         List<Login> list = new();
-
-        public Login() { }
-
         private string _username;
         private string _password;
         private string pathToJson = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "JSON", "Accounts.json");
 
         private static SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+        private static readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);
+
+        public Login() { }
+
+        public Login(string username, string hashedPassword)
+        {
+            _username = username;
+            _password = hashedPassword;
+        }
+
+        public string Username { get => _username; set => _username = value; }
+        public string Password { get => _password; set => _password = value; }
 
         public string HashPassword(string password)
         {
-            using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            using (var sha256 = SHA256.Create())
             {
                 byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
                 StringBuilder builder = new StringBuilder();
@@ -33,10 +43,9 @@ namespace ServerSProxy.Logic.ServersLogic
 
         public async Task<bool> VerifyPassword(string userName, string password)
         {
-            List<Login> list = await LoadLogins();
+            List<Login> logins = await LoadLogins();
             string hashedInput = HashPassword(password);
-
-            foreach (Login login in list)
+            foreach (Login login in logins)
             {
                 if (login.Username == userName)
                     return login.Password == hashedInput;
@@ -57,7 +66,6 @@ namespace ServerSProxy.Logic.ServersLogic
                         return "@\"\r\n    ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼\r\n    █▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█\r\n    █  Prezdivka je zabrana  ☠️   █\r\n    █▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█\r\n    ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲\r\n\" ";
                 }
 
-               
                 string hashed = HashPassword(password);
                 list.Add(new Login(userName, hashed));
                 await SaveLogins(list);
@@ -73,48 +81,44 @@ namespace ServerSProxy.Logic.ServersLogic
         {
             if (logins == null) logins = new List<Login>();
             string jsonData = System.Text.Json.JsonSerializer.Serialize(logins);
-            await File.WriteAllTextAsync(pathToJson, jsonData);
+
+            await _fileSemaphore.WaitAsync();
+            try
+            {
+                await File.WriteAllTextAsync(pathToJson, jsonData);
+            }
+            finally
+            {
+                _fileSemaphore.Release();
+            }
         }
 
         public async Task<List<Login>> LoadLogins()
         {
-            if (!File.Exists(pathToJson))
-                return new List<Login>();
-
-            string jsonData = await File.ReadAllTextAsync(pathToJson);
-
-            if (string.IsNullOrWhiteSpace(jsonData))
-                return new List<Login>();
-
+            await _fileSemaphore.WaitAsync();
             try
             {
-                return System.Text.Json.JsonSerializer.Deserialize<List<Login>>(jsonData)
-                       ?? new List<Login>();
+                if (!File.Exists(pathToJson))
+                    return new List<Login>();
+
+                string jsonData = await File.ReadAllTextAsync(pathToJson);
+                if (string.IsNullOrWhiteSpace(jsonData))
+                    return new List<Login>();
+
+                try
+                {
+                    return System.Text.Json.JsonSerializer.Deserialize<List<Login>>(jsonData)
+                           ?? new List<Login>();
+                }
+                catch
+                {
+                    return new List<Login>();
+                }
             }
-            catch
+            finally
             {
-                return new List<Login>();
+                _fileSemaphore.Release();
             }
-        }
-
-        public string Username
-        {
-            get { return _username; }
-            set { _username = value; }
-        }
-
-      
-        public string Password
-        {
-            get { return _password; }
-            set { _password = value; }
-        }
-
-      
-        public Login(string username, string hashedPassword)
-        {
-            _username = username;
-            _password = hashedPassword;
         }
     }
 }
