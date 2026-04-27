@@ -190,6 +190,7 @@ namespace ServerSProxy
                     await _playersLock.WaitAsync();
                     try
                     {
+                        await world.LeaveRoomAsync(player);
                         world.OnlinePlayers.Remove(player);
                     }
                     finally

@@ -90,7 +90,7 @@ namespace ServerSProxy.Logic.GameWorldCode
                 }
             }
         }
-
+        //vicemene k nicemu   
         public async Task SaveGameWorld()
         {
             string jsonData = System.Text.Json.JsonSerializer.Serialize(MapsInGameWorld);
@@ -150,23 +150,55 @@ namespace ServerSProxy.Logic.GameWorldCode
 
 
 
-
+        // --------------------------------------------------
+        //  SPRÁVA SPAWNUTÍ A ODCHODU Z MÍSTNOSTÍ
+        // --------------------------------------------------
 
 
         //uprava anhrani hlavbni vec se deje v game world current room je jen informacni v hracovy 
         //nezapomenout ho pri msrti dat a opdpojit z current room jak pri odhlaseni tak pri smrti a pak ho dat do lobby
+        public async Task LeaveRoomAsync(Player player)
+        {
+            if (MapsInGameWorld == null) return;
+            await _roomSemaphore.WaitAsync();   
+            try
+            {
+                MapsInGameWorld.ForEach(map =>
+                {
+                    map.RoomsInMap?.ForEach(room =>
+                    {
+                        room.PlayersInRoom?.Remove(player);
+                    });
+                });
 
+
+                player.CurrentRoom = null;
+            }
+            finally
+            {
+                _roomSemaphore.Release();
+            }
+        }
 
 
         public async Task SpawnPlayerAsync(Player player)
         {
+            if (MapsInGameWorld == null) return;
             // 1. remove player z aktualni mistnosti, pokud je v ni
             if (player.CurrentRoom != null)
             {
                 await _roomSemaphore.WaitAsync();
                 try
                 {
-                    player.CurrentRoom.PlayersInRoom?.Remove(player);
+                    MapsInGameWorld.ForEach(map =>
+                    {
+                        map.RoomsInMap?.ForEach(room =>
+                        {
+                            room.PlayersInRoom?.Remove(player);
+                        });
+                    });
+
+
                     player.CurrentRoom = null;
                 }
                 finally
@@ -514,6 +546,9 @@ namespace ServerSProxy.Logic.GameWorldCode
                 if (!player.IsAlive)
                 {
                     WriteToConsole.TextToPlayer(player, "You are dead. Please wait for returning to lobby...");
+
+
+                    await LeaveRoomAsync(player);
                     await Task.Delay(5000);
 
                     await SetVluesForPlayer(player);
