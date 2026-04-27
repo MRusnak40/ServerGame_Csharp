@@ -1,4 +1,5 @@
 ﻿using ServerSProxy.Logic.Commands;
+using ServerSProxy.Logic.NPCs;
 using ServerSProxy.Logic.PlayerCode;
 using ServerSProxy.Logic.PlayerCode.Items;
 using ServerSProxy.Logic.ServersLogic;
@@ -28,6 +29,7 @@ namespace ServerSProxy.Logic.GameWorldCode
         private readonly object _accountsLock = new object();
         private static readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);   // pro soubor
         private readonly SemaphoreSlim _roomSemaphore = new SemaphoreSlim(1, 1); //pro synchronizaci přístupu k místnostem (pokud bude potřeba)
+        private static SemaphoreSlim _playersLock = new SemaphoreSlim(1, 1);
         public GameWorld()
         {
             _onlinePlayers = new List<Player>();
@@ -79,17 +81,55 @@ namespace ServerSProxy.Logic.GameWorldCode
 
         public async Task LoadGameWorld()
         {
-            if (File.Exists(pathToJsonGameWorld))
+            try
             {
+                if (!File.Exists(pathToJsonGameWorld))
+                {
+                    Console.WriteLine(" GameWorld.json nenalezen. Používám prázdný svět.");
+                    MapsInGameWorld = new List<Map>();
+                    NumberOfMapsInGameWorld = 0;
+                    return;
+                }
+
                 string jsonData = await File.ReadAllTextAsync(pathToJsonGameWorld);
                 var maps = System.Text.Json.JsonSerializer.Deserialize<List<Map>>(jsonData);
-                if (maps != null)
+
+                if (maps == null)
                 {
-                    MapsInGameWorld = maps;
-                    NumberOfMapsInGameWorld = maps.Count;
+                    Console.WriteLine(" GameWorld.json je prázdný. Používám prázdný svět.");
+                    MapsInGameWorld = new List<Map>();
+                    NumberOfMapsInGameWorld = 0;
+                    return;
                 }
+
+                // Inicializuj listy v Room objektech - DŮLEŽITÉ!
+                foreach (var map in maps)
+                {
+                    if (map.RoomsInMap != null)
+                    {
+                        foreach (var room in map.RoomsInMap)
+                        {
+                            room.PlayersInRoom ??= new List<Player>();
+                            room.NpcsInRoom ??= new List<NPC>();
+                            room.EnemiesInRoom ??= new List<Enemy>();
+                            room.DropedItems ??= new List<Item>();
+                            room.ConnectedRooms ??= new List<string>();
+                        }
+                    }
+                }
+
+                MapsInGameWorld = maps;
+                NumberOfMapsInGameWorld = maps.Count;
+                Console.WriteLine($"✓ Svět načten: {maps.Count} map");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Chyba při načítání GameWorld.json: {ex.Message}");
+                MapsInGameWorld = new List<Map>();
+                NumberOfMapsInGameWorld = 0;
             }
         }
+
         //vicemene k nicemu   
         public async Task SaveGameWorld()
         {
@@ -301,6 +341,10 @@ namespace ServerSProxy.Logic.GameWorldCode
             catch (OperationCanceledException)
             {
                 Console.WriteLine($"[SYSTEM] Autosave pro hráče {player.Name} byl korektně ukončen.");
+            }
+            finally
+            {
+                timer.Dispose();
             }
         }
 

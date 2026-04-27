@@ -28,7 +28,14 @@ namespace ServerSProxy
             myServer.Start();
             isRunning = true;
 
-           
+            // Graceful shutdown
+            Console.CancelKeyPress += (s, e) =>
+            {
+                e.Cancel = true;
+                Console.WriteLine("\n[SYSTEM] Vypínám server...");
+                isRunning = false;
+            };
+
             classTypeLiekEnum.LoadFromFile().GetAwaiter().GetResult();
             world.LoadPlayers().GetAwaiter().GetResult();
             world.LoadGameWorld().GetAwaiter().GetResult();
@@ -45,8 +52,16 @@ namespace ServerSProxy
             //zde se vytvari nove vlakno pro hrace
             while (isRunning)
             {
-                TcpClient client = await myServer.AcceptTcpClientAsync();
-                _ = Task.Run(() => ClientLoop(client));
+                try
+                {
+                    TcpClient client = await myServer.AcceptTcpClientAsync();
+                    _ = Task.Run(() => ClientLoop(client));
+                }
+                catch
+                {
+                    if (!isRunning)
+                        break;
+                }
             }
         }
 
@@ -95,12 +110,6 @@ namespace ServerSProxy
                         return;
                     }
 
-
-
-
-
-
-
                     await _playersLock.WaitAsync();
 
                     try
@@ -147,7 +156,7 @@ namespace ServerSProxy
                         {
 
 
-                           
+
 
                             continue;
                         }
@@ -159,31 +168,15 @@ namespace ServerSProxy
                             throw new Exception("Player chose to disconnect");
 
                         }
-
-
-
-
-
-
                     }
-
                 }
-
-
-                //doebirat neco z listu co tam nebylo by to hodilo chybu
-
-
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Chyba v komunikaci s {player.Name}  : {ex.Message}");
             }
-
-
             finally
             {
-
                 cts.Cancel();
                 if (player.Name != null && isFirstLogin)
                 {
@@ -197,7 +190,6 @@ namespace ServerSProxy
                     {
                         _playersLock.Release();
                     }
-
                 }
 
                 Console.WriteLine($"Klient {player.Name} se odpojil od serveru");

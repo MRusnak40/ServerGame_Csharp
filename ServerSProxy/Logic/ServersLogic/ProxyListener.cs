@@ -34,41 +34,63 @@ public class ProxyListener
         Console.WriteLine("Klient se pripojil na proxy");
 
         TcpClient server = new TcpClient();
-        await server.ConnectAsync(targetIp, targetPort);
-
-        StreamReader odKlienta = new StreamReader(clientToProxy.GetStream(), Encoding.UTF8);
-        StreamWriter KeKlientovi = new StreamWriter(clientToProxy.GetStream(), Encoding.UTF8);
-        KeKlientovi.AutoFlush = true;
-
-        StreamReader odServeru = new StreamReader(server.GetStream(), Encoding.UTF8);
-        StreamWriter KeServeru = new StreamWriter(server.GetStream(), Encoding.UTF8);
-        KeServeru.AutoFlush = true;
-
-        // Cteme od klienta a posilame serveru
-        Task smer1 = Task.Run(async () =>
+        try
         {
-            string? zprava;
-            while ((zprava = await odKlienta.ReadLineAsync()) != null)
-            {
-                Console.WriteLine($"Klient rekl: {zprava}");
-                await KeServeru.WriteLineAsync(zprava);
-            }
-        });
-
-        // Cteme od serveru a posilame klientovi
-        Task smer2 = Task.Run(async () =>
+            await server.ConnectAsync(targetIp, targetPort);
+        }
+        catch
         {
-            string? zprava;
-            while ((zprava = await odServeru.ReadLineAsync()) != null)
+            Console.WriteLine("Nepodařilo se připojit na server");
+            clientToProxy.Close();
+            return;
+        }
+
+        try
+        {
+            using (var odKlienta = new StreamReader(clientToProxy.GetStream(), Encoding.UTF8))
+            using (var KeKlientovi = new StreamWriter(clientToProxy.GetStream(), Encoding.UTF8))
+            using (var odServeru = new StreamReader(server.GetStream(), Encoding.UTF8))
+            using (var KeServeru = new StreamWriter(server.GetStream(), Encoding.UTF8))
             {
-                Console.WriteLine($"Server rekl: {zprava}");
-                await KeKlientovi.WriteLineAsync(zprava);
+                KeServeru.AutoFlush = true;
+                KeKlientovi.AutoFlush = true;
+
+                Task smer1 = Task.Run(async () =>
+                {
+                    try
+                    {
+                        string? zprava;
+                        while ((zprava = await odKlienta.ReadLineAsync()) != null)
+                        {
+                            Console.WriteLine($"Klient rekl: {zprava}");
+                            await KeServeru.WriteLineAsync(zprava);
+                        }
+                    }
+                    catch { }
+                });
+
+                Task smer2 = Task.Run(async () =>
+                {
+                    try
+                    {
+                        string? zprava;
+                        while ((zprava = await odServeru.ReadLineAsync()) != null)
+                        {
+                            Console.WriteLine($"Server rekl: {zprava}");
+                            await KeKlientovi.WriteLineAsync(zprava);
+                        }
+                    }
+                    catch { }
+                });
+
+                await Task.WhenAny(smer1, smer2);
             }
-        });
-
-        // Cekame dokud se nekdo neodpoji
-        await Task.WhenAny(smer1, smer2);
-
-        Console.WriteLine("Klient se odpojil od proxy");
+        }
+        finally
+        {
+            clientToProxy.Close();
+            server.Close();
+            Console.WriteLine("Klient se odpojil od proxy");
+        }
     }
 }

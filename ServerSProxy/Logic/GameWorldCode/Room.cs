@@ -31,6 +31,16 @@ namespace ServerSProxy.Logic.GameWorldCode
         private List<Item>? _dropedItems;
 
 
+        public Room()
+        {
+            _connectedRooms = new List<string>();
+            _playersInRoom = new List<Player>();
+            _npcsInRoom = new List<NPC>();
+            _enemiesInRoom = new List<Enemy>();
+            _dropedItems = new List<Item>();
+        }
+
+
         public string Name
         {
             get { return _name; }
@@ -72,5 +82,7 @@ namespace ServerSProxy.Logic.GameWorldCode
             get { return _dropedItems; }
             set { _dropedItems = value; }
         }
+
+
     }
 }

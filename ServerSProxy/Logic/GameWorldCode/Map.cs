@@ -9,7 +9,7 @@ namespace ServerSProxy.Logic.GameWorldCode
     internal class Map
     {
 
-        public Map() { }
+     
 
 
         private string _nameOfMap;
@@ -17,7 +17,10 @@ namespace ServerSProxy.Logic.GameWorldCode
         List<Room>? _roomsInMap;
 
 
-
+        public Map()
+        {
+            _roomsInMap = new List<Room>();
+        }
         public string NameOfMap
         {
             get { return _nameOfMap; }
