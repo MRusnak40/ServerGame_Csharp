@@ -25,10 +25,10 @@ namespace ServerSProxy.Logic.GameWorldCode
 
         private List<Player> _accounts;
 
-        // Zámky pro bezpečnou práci se sdílenými zdroji
+        
         private readonly object _accountsLock = new object();
         private static readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);   // pro soubor
-        private readonly SemaphoreSlim _roomSemaphore = new SemaphoreSlim(1, 1); //pro synchronizaci přístupu k místnostem (pokud bude potřeba)
+        private readonly SemaphoreSlim _roomSemaphore = new SemaphoreSlim(1, 1); //pristup k mkstnsotem
         private static SemaphoreSlim _playersLock = new SemaphoreSlim(1, 1);
         public GameWorld()
         {
@@ -37,7 +37,7 @@ namespace ServerSProxy.Logic.GameWorldCode
             _mapsInGameWorld = new List<Map>();
         }
 
-        // Vlastnosti – Accounts obalujeme jen pro jistotu, ale všechna práce s ním je uvnitř locků
+        // Vlastnosti 
         public List<Player> Accounts
         {
             get { lock (_accountsLock) return _accounts; }
@@ -102,7 +102,7 @@ namespace ServerSProxy.Logic.GameWorldCode
                     return;
                 }
 
-                // Inicializuj listy v Room objektech - DŮLEŽITÉ!
+                //inicilize
                 foreach (var map in maps)
                 {
                     if (map.RoomsInMap != null)
@@ -171,7 +171,7 @@ namespace ServerSProxy.Logic.GameWorldCode
             List<Player> snapshot;
             lock (_accountsLock)
             {
-                snapshot = new List<Player>(_accounts);   // kopie pro bezpečnou serializaci
+                snapshot = new List<Player>(_accounts);   // kopie pro bezpecnost serializace
             }
 
             string jsonData = System.Text.Json.JsonSerializer.Serialize(snapshot);
@@ -247,7 +247,7 @@ namespace ServerSProxy.Logic.GameWorldCode
                 }
             }
 
-            // 2. nejnizsi level v celém světě
+            // 2. lowes level ve svete
             int minLevel = int.MaxValue;
             foreach (var map in MapsInGameWorld)
             {
