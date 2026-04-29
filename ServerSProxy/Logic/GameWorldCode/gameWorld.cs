@@ -69,13 +69,15 @@ namespace ServerSProxy.Logic.GameWorldCode
                 { "exit", new ExitComm(player, this) },
                 { "chat", new Chat(player, this) },
                 { "help", new Help(player, this) },
-                { "stats", new ShowStats(player, this) }
+                { "stats", new ShowStats(player, this) },
+                
+                { "move", new Move(player, this) },
             };
         }
 
 
         // --------------------------------------------------
-        //  SPRÁVA SVETA 
+        //  SPRAVA SVETA 
         // --------------------------------------------------
 
 

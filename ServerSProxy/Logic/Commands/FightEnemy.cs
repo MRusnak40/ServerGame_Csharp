@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace ServerSProxy.Logic.Commands
 {
-    internal class Fight : Command
+    internal class FightEnemy : Command
     {
-        public Fight(Player player, GameWorld gameWorld) : base(player, gameWorld)
+        public FightEnemy(Player player, GameWorld gameWorld) : base(player, gameWorld)
         {
         }
 

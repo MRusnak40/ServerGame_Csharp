@@ -84,5 +84,18 @@ namespace ServerSProxy.Logic.GameWorldCode
         }
 
 
+        public override string ToString()
+        {
+            return $@"
+              <<| {Name.ToUpper()} |>>
+              --[ Level: {LevelOfRoom} ]--
+  
+              Entities: [ Plr:{PlayersInRoom?.Count ?? 0} / Npc:{NpcsInRoom?.Count ?? 0} ]
+              Threats:  [ Hostile:{EnemiesInRoom?.Count ?? 0} ]
+              Ground:   [ Items:{DropedItems?.Count ?? 0} ]
+  
+              ==============================";
+        }
+
     }
 }
