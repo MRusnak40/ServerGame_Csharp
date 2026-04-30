@@ -91,7 +91,7 @@ namespace ServerSProxy.Logic.PlayerCode
             get { return _isKillable; }
             set { _isKillable = value; }
         }
-
+        [JsonIgnore]
         public Room CurrentRoom
         {
             get { return _currentRoom; }

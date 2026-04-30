@@ -47,7 +47,7 @@ namespace ServerSProxy.Logic.Commands
             await DisplayOpponents(availableOpponents);
 
             // get opponent selection
-            await WriteToConsole.TextToPlayerOneLine(_player, "\n > select opponent (1-" + availableOpponents.Count + "): ");
+            await WriteToConsole.TextToPlayer(_player, "\n > select opponent (1-" + availableOpponents.Count + "): ");
             string? choice = await WriteToConsole.TakeInput(_player);
 
             if (!int.TryParse(choice, out int opponentChoice) || opponentChoice < 1 || opponentChoice > availableOpponents.Count)
@@ -107,10 +107,10 @@ namespace ServerSProxy.Logic.Commands
                 await DisplayFightState(player1, player2);
 
                 // get moves from both players
-                await WriteToConsole.TextToPlayerOneLine(player1, " > your move (fast/heavy/careful): ");
+                await WriteToConsole.TextToPlayer(player1, " > your move (fast/heavy/careful): ");
                 string? move1 = await WriteToConsole.TakeInput(player1);
 
-                await WriteToConsole.TextToPlayerOneLine(player2, " > your move (fast/heavy/careful): ");
+                await WriteToConsole.TextToPlayer(player2, " > your move (fast/heavy/careful): ");
                 string? move2 = await WriteToConsole.TakeInput(player2);
 
                 // process round

@@ -23,8 +23,8 @@ namespace ServerSProxy.Logic.Commands
             while (chatting)
             {
                 // 2. Zeptáme se, co chce napsat
-                await WriteToConsole.TextToPlayerOneLine(_player, "Message: ");
-                string message = await _player.Reader.ReadLineAsync();
+                await WriteToConsole.TextToPlayer(_player, "Message: ");
+                string message = await WriteToConsole.TakeInput(_player);
                 if (string.IsNullOrWhiteSpace(message))
                 {
                     await WriteToConsole.TextToPlayer(_player, "Empty message ignored.");
@@ -32,14 +32,27 @@ namespace ServerSProxy.Logic.Commands
                 }
                 message = message.Trim();
 
-                // 3. Zeptáme se, komu to poslat
-                await WriteToConsole.TextToPlayerOneLine(_player, "Send to (all / player name): ");
-                string target = await _player.Reader.ReadLineAsync();
+               
+                await WriteToConsole.TextToPlayer(_player, "Send to (all in ROOM / player name): ");
+
+                WriteToConsole.TextToPlayer(_player, "▬▬▬▬▬▬▬▬▬▬ONLINE▬▬▬▬▬▬▬▬▬▬▬▬");
+             
+
+                foreach (Player p in _gameWorld.OnlinePlayers) {
+
+                    if (p == _player) continue;
+                    WriteToConsole.TextToPlayer(_player, p.Name);
+                    WriteToConsole.TextToPlayer(_player, "------------------");
+
+
+                }
+                WriteToConsole.TextToPlayer(_player, "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+                string target = await WriteToConsole.TakeInput(_player);
                 target = target?.Trim().ToLower() ?? "";
 
                 if (target == "all")
                 {
-                    // Veřejná zpráva do místnosti
+               
                     if (_player.CurrentRoom == null || _player.CurrentRoom.PlayersInRoom == null)
                     {
                         await WriteToConsole.TextToPlayer(_player, "You are not in any room.");
@@ -77,8 +90,8 @@ namespace ServerSProxy.Logic.Commands
                 }
 
                 // 4. Zeptáme se, jestli chce pokračovat
-                await WriteToConsole.TextToPlayerOneLine(_player, "Continue chatting? (yes/no): ");
-                string answer = await _player.Reader.ReadLineAsync();
+                await WriteToConsole.TextToPlayer(_player, "Continue chatting? (yes/no): ");
+                string answer = await WriteToConsole.TakeInput(_player);
                 if (answer?.Trim().ToLower() != "yes")
                     chatting = false;
             }

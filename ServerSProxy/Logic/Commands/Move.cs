@@ -41,7 +41,7 @@ namespace ServerSProxy.Logic.Commands
            
             await DisplayConnectedRooms(connectedRooms);
 
-            await WriteToConsole.TextToPlayerOneLine(_player, "\n> select room (1-" + connectedRooms.Count + "): ");
+            await WriteToConsole.TextToPlayer(_player, "\n> select room (1-" + connectedRooms.Count + "): ");
             string? choice = await WriteToConsole.TakeInput(_player);
 
             if (!int.TryParse(choice, out int roomChoice) || roomChoice < 1 || roomChoice > connectedRooms.Count)
