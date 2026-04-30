@@ -70,8 +70,10 @@ namespace ServerSProxy.Logic.GameWorldCode
                 { "chat", new Chat(player, this) },
                 { "help", new Help(player, this) },
                 { "stats", new ShowStats(player, this) },
+
                 
                 { "move", new Move(player, this) },
+                { "fight", new FightPlayer(player, this) },
             };
         }
 

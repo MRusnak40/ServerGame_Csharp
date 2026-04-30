@@ -19,11 +19,10 @@ namespace ServerSProxy.Logic.Commands
             sb.AppendLine(" exit     – Leave the game");
             sb.AppendLine(" help     – Show this help");
             sb.AppendLine(" stats    – Show your stats");
-            sb.AppendLine(" chat     – Enter chat mode");
             sb.AppendLine(" move     – Move to another room");
             // sb.AppendLine(" pickup   – Pick up an item");
             // sb.AppendLine(" fight    – FightPlayer an NPC");
-            sb.AppendLine(" playerFight    – FightPlayer a player");
+            sb.AppendLine(" fight    – FightPlayer a player");
             // sb.AppendLine(" trade    – Trade with another player");
             sb.AppendLine("═══════════════════════════════════════");
 
