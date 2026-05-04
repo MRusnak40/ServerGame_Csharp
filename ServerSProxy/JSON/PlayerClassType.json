@@ -3,40 +3,40 @@
     "ClassId": "warrior",
     "DisplayName": "--- WARRIOR ---",
     "Description": "Good all-rounder",
-    "BaseHealth": 100,
-    "BaseShield": 50,
-    "BaseStamina": 100,
-    "BaseStrength": 15,
-    "BaseAttackSpeed": 10
+    "BaseHealth": 60,
+    "BaseShield": 15,
+    "BaseStamina": 80,
+    "BaseStrength": 10,
+    "BaseAttackSpeed": 8
   },
   {
     "ClassId": "berserker",
     "DisplayName": "--- BERSERKER ---",
     "Description": "Overpowerd with low hp",
-    "BaseHealth": 70,
-    "BaseShield": 5,
-    "BaseStamina": 150,
-    "BaseStrength": 35,
-    "BaseAttackSpeed": 20
+    "BaseHealth": 35,
+    "BaseShield": 3,
+    "BaseStamina": 100,
+    "BaseStrength": 28,
+    "BaseAttackSpeed": 16
   },
   {
     "ClassId": "mage",
     "DisplayName": "--- MAGE ---",
     "Description": "High damage but low hp",
-    "BaseHealth": 40,
-    "BaseShield": 15,
-    "BaseStamina": 80,
-    "BaseStrength": 55,
-    "BaseAttackSpeed": 5
+    "BaseHealth": 25,
+    "BaseShield": 8,
+    "BaseStamina": 60,
+    "BaseStrength": 42,
+    "BaseAttackSpeed": 4
   },
   {
     "ClassId": "armorer",
     "DisplayName": "--- ARMORER ---",
     "Description": "Tank but slow attacker  ",
-    "BaseHealth": 180,
-    "BaseShield": 120,
-    "BaseStamina": 60,
-    "BaseStrength": 8,
-    "BaseAttackSpeed": 3
+    "BaseHealth": 90,
+    "BaseShield": 60,
+    "BaseStamina": 50,
+    "BaseStrength": 7,
+    "BaseAttackSpeed": 2
   }
 ]

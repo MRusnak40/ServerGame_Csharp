@@ -46,7 +46,7 @@ namespace ServerSProxy.Logic.PlayerCode
         private int _attackSpeed;
         private int _strength;
 
-        // Equipment tracking: key = TypeOfItem, value = equipped item
+        // quipment tracking key = TypeOfItem  value = equipped item
         [JsonIgnore]
         private Dictionary<string, Item> _equippedItems = new Dictionary<string, Item>();
 
@@ -208,7 +208,7 @@ namespace ServerSProxy.Logic.PlayerCode
                 EquippedItems.Remove(newItem.TypeOfItem);
             }
 
-            // Equip new
+            // equip new
             newItem.Equip(this);
             EquippedItems[newItem.TypeOfItem] = newItem;
             return oldItem; // caller must drop old item to room

@@ -56,7 +56,7 @@ namespace ServerSProxy.Logic.PlayerCode
                 }
             }
 
-            // Check capacity (each distinct item takes one slot)
+            // check capacity 
             if (Items.Count >= Capacity)
                 return false;
 

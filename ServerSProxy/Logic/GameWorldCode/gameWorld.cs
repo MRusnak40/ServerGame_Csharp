@@ -27,8 +27,8 @@ namespace ServerSProxy.Logic.GameWorldCode
 
 
         private readonly object _accountsLock = new object();
-        private static readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);   // pro soubor
-        private readonly SemaphoreSlim _roomSemaphore = new SemaphoreSlim(1, 1); //pristup k mkstnsotem
+        private static readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);  
+        private readonly SemaphoreSlim _roomSemaphore = new SemaphoreSlim(1, 1); 
         private static SemaphoreSlim _playersLock = new SemaphoreSlim(1, 1);
         public GameWorld()
         {
@@ -37,7 +37,7 @@ namespace ServerSProxy.Logic.GameWorldCode
             _mapsInGameWorld = new List<Map>();
         }
 
-        // Vlastnosti 
+        
         public List<Player> Accounts
         {
             get { lock (_accountsLock) return _accounts; }
