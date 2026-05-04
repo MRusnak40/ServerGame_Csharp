@@ -1,122 +1,132 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ServerSProxy.Logic.PlayerCode;
+using System;
 
 namespace ServerSProxy.Logic.PlayerCode.Items
 {
     internal class Item
     {
-        public Item() { }
+        public Item() { Quantity = 1; }
 
-
-        //basic info
         private string _name;
         private string _description;
-        private int _value; //value in coins
+        private int _value;
         private bool _isStackable;
         private bool _isEquippable;
 
-        //stats
         private int _attackBonus;
-
         private int _healthBonus;
-
         private int _staminaBonus;
-
         private int _armorBonus;
-
         private int _attackSpeedBonus;
-
         private int _healUPBonus;
 
-
-
         private string _typeOfItem;
-
-
-
-
-
-
-
-
-        // properties
-
+        private int _quantity;
 
         public bool IsEquippable
         {
-            get { return _isEquippable; }
-            set { _isEquippable = value; }
+            get => _isEquippable;
+            set => _isEquippable = value;
         }
 
         public int AttackBonus
         {
-            get { return _attackBonus; }
-            set { _attackBonus = value; }
+            get => _attackBonus;
+            set => _attackBonus = value;
         }
 
         public int HealthBonus
         {
-            get { return _healthBonus; }
-            set { _healthBonus = value; }
+            get => _healthBonus;
+            set => _healthBonus = value;
         }
 
         public int StaminaBonus
         {
-            get { return _staminaBonus; }
-            set { _staminaBonus = value; }
+            get => _staminaBonus;
+            set => _staminaBonus = value;
         }
 
         public int ArmorBonus
         {
-            get { return _armorBonus; }
-            set { _armorBonus = value; }
+            get => _armorBonus;
+            set => _armorBonus = value;
         }
 
         public int AttackSpeedBonus
         {
-            get { return _attackSpeedBonus; }
-            set { _attackSpeedBonus = value; }
+            get => _attackSpeedBonus;
+            set => _attackSpeedBonus = value;
         }
 
         public int HealUPBonus
         {
-            get { return _healUPBonus; }
-            set { _healUPBonus = value; }
+            get => _healUPBonus;
+            set => _healUPBonus = value;
         }
 
         public string TypeOfItem
         {
-            get { return _typeOfItem; }
-            set { _typeOfItem = value; }
+            get => _typeOfItem;
+            set => _typeOfItem = value;
         }
 
         public string Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get => _name;
+            set => _name = value;
         }
 
         public string Description
         {
-            get { return _description; }
-            set { _description = value; }
+            get => _description;
+            set => _description = value;
         }
 
         public int Value
         {
-            get { return _value; }
-            set { _value = value; }
+            get => _value;
+            set => _value = value;
         }
-
-
 
         public bool IsStackable
         {
-            get { return _isStackable; }
-            set { _isStackable = value; }
+            get => _isStackable;
+            set => _isStackable = value;
+        }
+
+        public int Quantity
+        {
+            get => _quantity;
+            set => _quantity = Math.Max(1, value);
+        }
+
+        // applies item bonuses to player stats 
+        public void Equip(Player player)
+        {
+            if (player == null) return;
+            player.MaxHealth += HealthBonus;
+            player.Health += HealthBonus;
+            player.MaxShield += ArmorBonus;
+            player.Shield += ArmorBonus;
+            player.MaxStamina += StaminaBonus;
+            player.Stamina += StaminaBonus;
+            player.Strength += AttackBonus;
+            player.AttackSpeed += AttackSpeedBonus;
+        }
+
+        //removes item bonuses from player stats 
+        public void Unequip(Player player)
+        {
+            if (player == null) return;
+            player.MaxHealth -= HealthBonus;
+            player.Health = Math.Min(player.Health, player.MaxHealth);
+            player.MaxShield -= ArmorBonus;
+            player.Shield = Math.Min(player.Shield, player.MaxShield);
+            player.MaxStamina -= StaminaBonus;
+            player.Stamina = Math.Min(player.Stamina, player.MaxStamina);
+            player.Strength -= AttackBonus;
+            player.AttackSpeed -= AttackSpeedBonus;
         }
     }
 }

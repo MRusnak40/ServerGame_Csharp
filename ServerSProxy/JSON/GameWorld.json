@@ -7,8 +7,39 @@
         "LevelOfRoom": 1,
         "ConnectedRooms": [ "Glade Ring", "Enchanted Thicket North" ],
         "PlayersInRoom": null,
-        "NpcsInRoom": null,
-        "EnemiesInRoom": [],
+        "NpcsInRoom": [
+          {
+            "Name": "Elara the Druid",
+            "TextToTell": "The bunnies are overrunning the forest. Could you thin their numbers?",
+            "IsQuestGiver": true,
+            "QuestsToGive": [
+              {
+                "Name": "Bunny Culling",
+                "Description": "Kill 3 Lost Bunnies in the Glade Ring.",
+                "ExperienceReward": 30,
+                "CoinsReward": 10,
+                "TargetEnemyName": "Lost Bunny",
+                "RequiredKillCount": 3,
+                "CurrentKillCount": 0
+              }
+            ]
+          }
+        ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Enraged Boar",
+            "Level": 1,
+            "MaxHealth": 20,
+            "Health": 20,
+            "MaxShield": 2,
+            "Shield": 2,
+            "MaxStamina": 30,
+            "Stamina": 30,
+            "AttackSpeed": 10,
+            "Strength": 4,
+            "DroppingItems": []
+          }
+        ],
         "DropedItems": [
           {
             "Name": "Health Potion",
@@ -45,8 +76,39 @@
         "LevelOfRoom": 1,
         "ConnectedRooms": [ "Glade Ring", "Enchanted Thicket East" ],
         "PlayersInRoom": null,
-        "NpcsInRoom": null,
-        "EnemiesInRoom": [],
+        "NpcsInRoom": [
+          {
+            "Name": "Bodrin the Merchant",
+            "TextToTell": "Those thieving foxes stole my wares! Bring me their pelts.",
+            "IsQuestGiver": true,
+            "QuestsToGive": [
+              {
+                "Name": "Fox Hunt",
+                "Description": "Kill 2 Thieving Foxes in this glade.",
+                "ExperienceReward": 20,
+                "CoinsReward": 8,
+                "TargetEnemyName": "Thieving Fox",
+                "RequiredKillCount": 2,
+                "CurrentKillCount": 0
+              }
+            ]
+          }
+        ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Thieving Fox",
+            "Level": 1,
+            "MaxHealth": 12,
+            "Health": 12,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 40,
+            "Stamina": 40,
+            "AttackSpeed": 14,
+            "Strength": 3,
+            "DroppingItems": []
+          }
+        ],
         "DropedItems": [
           {
             "Name": "Health Potion",
@@ -69,8 +131,39 @@
         "LevelOfRoom": 1,
         "ConnectedRooms": [ "Glade Ring", "Enchanted Thicket South" ],
         "PlayersInRoom": null,
-        "NpcsInRoom": null,
-        "EnemiesInRoom": [],
+        "NpcsInRoom": [
+          {
+            "Name": "Sir Gareth",
+            "TextToTell": "The goblins have become a real threat. Prove your valor!",
+            "IsQuestGiver": true,
+            "QuestsToGive": [
+              {
+                "Name": "Goblin Slayer",
+                "Description": "Kill 2 Forest Goblins in the Thicket.",
+                "ExperienceReward": 40,
+                "CoinsReward": 15,
+                "TargetEnemyName": "Forest Goblin",
+                "RequiredKillCount": 2,
+                "CurrentKillCount": 0
+              }
+            ]
+          }
+        ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Moss Golem",
+            "Level": 1,
+            "MaxHealth": 30,
+            "Health": 30,
+            "MaxShield": 5,
+            "Shield": 5,
+            "MaxStamina": 15,
+            "Stamina": 15,
+            "AttackSpeed": 5,
+            "Strength": 6,
+            "DroppingItems": []
+          }
+        ],
         "DropedItems": [
           {
             "Name": "Wooden Shield",
@@ -93,8 +186,39 @@
         "LevelOfRoom": 1,
         "ConnectedRooms": [ "Glade Ring", "Enchanted Thicket West" ],
         "PlayersInRoom": null,
-        "NpcsInRoom": null,
-        "EnemiesInRoom": [],
+        "NpcsInRoom": [
+          {
+            "Name": "Mira the Alchemist",
+            "TextToTell": "I need giant toad toxin for my experiments. Fetch some!",
+            "IsQuestGiver": true,
+            "QuestsToGive": [
+              {
+                "Name": "Toad Toxin",
+                "Description": "Kill 2 Giant Toads here.",
+                "ExperienceReward": 25,
+                "CoinsReward": 10,
+                "TargetEnemyName": "Giant Toad",
+                "RequiredKillCount": 2,
+                "CurrentKillCount": 0
+              }
+            ]
+          }
+        ],
+        "EnemiesInRoom": [
+          {
+            "Name": "Giant Toad",
+            "Level": 1,
+            "MaxHealth": 25,
+            "Health": 25,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 25,
+            "Stamina": 25,
+            "AttackSpeed": 7,
+            "Strength": 5,
+            "DroppingItems": []
+          }
+        ],
         "DropedItems": [
           {
             "Name": "Health Potion",
@@ -118,7 +242,21 @@
         "ConnectedRooms": [ "Glade Ring", "Enchanted Thicket Fifth" ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
-        "EnemiesInRoom": [],
+        "EnemiesInRoom": [
+          {
+            "Name": "Corrupted Sapling",
+            "Level": 1,
+            "MaxHealth": 18,
+            "Health": 18,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 35,
+            "Stamina": 35,
+            "AttackSpeed": 12,
+            "Strength": 4,
+            "DroppingItems": []
+          }
+        ],
         "DropedItems": [
           {
             "Name": "Rusty Sword",
@@ -139,7 +277,13 @@
       {
         "Name": "Glade Ring",
         "LevelOfRoom": 1,
-        "ConnectedRooms": [ "Northern Glade", "Eastern Glade", "Southern Glade", "Western Glade", "Fifth Glade" ],
+        "ConnectedRooms": [
+          "Northern Glade",
+          "Eastern Glade",
+          "Southern Glade",
+          "Western Glade",
+          "Fifth Glade"
+        ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
         "EnemiesInRoom": [
@@ -334,9 +478,30 @@
       {
         "Name": "Crystal Cavern North",
         "LevelOfRoom": 3,
-        "ConnectedRooms": [ "Enchanted Thicket North", "Crystal Ring", "Molten Tunnel North" ],
+        "ConnectedRooms": [
+          "Enchanted Thicket North",
+          "Crystal Ring",
+          "Molten Tunnel North"
+        ],
         "PlayersInRoom": null,
-        "NpcsInRoom": null,
+        "NpcsInRoom": [
+          {
+            "Name": "Dwalin the Miner",
+            "TextToTell": "Bats are eating my lunch! Clear them out!",
+            "IsQuestGiver": true,
+            "QuestsToGive": [
+              {
+                "Name": "Bat Extermination",
+                "Description": "Kill 3 Crystal Bats in the caverns.",
+                "ExperienceReward": 60,
+                "CoinsReward": 20,
+                "TargetEnemyName": "Crystal Bat",
+                "RequiredKillCount": 3,
+                "CurrentKillCount": 0
+              }
+            ]
+          }
+        ],
         "EnemiesInRoom": [
           {
             "Name": "Crystal Bat",
@@ -372,7 +537,11 @@
       {
         "Name": "Crystal Cavern East",
         "LevelOfRoom": 3,
-        "ConnectedRooms": [ "Enchanted Thicket East", "Crystal Ring", "Molten Tunnel East" ],
+        "ConnectedRooms": [
+          "Enchanted Thicket East",
+          "Crystal Ring",
+          "Molten Tunnel East"
+        ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
         "EnemiesInRoom": [
@@ -410,7 +579,11 @@
       {
         "Name": "Crystal Cavern South",
         "LevelOfRoom": 3,
-        "ConnectedRooms": [ "Enchanted Thicket South", "Crystal Ring", "Molten Tunnel South" ],
+        "ConnectedRooms": [
+          "Enchanted Thicket South",
+          "Crystal Ring",
+          "Molten Tunnel South"
+        ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
         "EnemiesInRoom": [
@@ -448,7 +621,11 @@
       {
         "Name": "Crystal Cavern West",
         "LevelOfRoom": 3,
-        "ConnectedRooms": [ "Enchanted Thicket West", "Crystal Ring", "Molten Tunnel West" ],
+        "ConnectedRooms": [
+          "Enchanted Thicket West",
+          "Crystal Ring",
+          "Molten Tunnel West"
+        ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
         "EnemiesInRoom": [
@@ -486,7 +663,12 @@
       {
         "Name": "Crystal Ring",
         "LevelOfRoom": 3,
-        "ConnectedRooms": [ "Crystal Cavern North", "Crystal Cavern East", "Crystal Cavern South", "Crystal Cavern West" ],
+        "ConnectedRooms": [
+          "Crystal Cavern North",
+          "Crystal Cavern East",
+          "Crystal Cavern South",
+          "Crystal Cavern West"
+        ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
         "EnemiesInRoom": [
@@ -661,7 +843,12 @@
       {
         "Name": "Molten Ring",
         "LevelOfRoom": 4,
-        "ConnectedRooms": [ "Molten Tunnel North", "Molten Tunnel East", "Molten Tunnel South", "Molten Tunnel West" ],
+        "ConnectedRooms": [
+          "Molten Tunnel North",
+          "Molten Tunnel East",
+          "Molten Tunnel South",
+          "Molten Tunnel West"
+        ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
         "EnemiesInRoom": [
@@ -706,7 +893,24 @@
         "LevelOfRoom": 5,
         "ConnectedRooms": [ "Molten Tunnel North", "Citadel Plaza North", "Sky Ring" ],
         "PlayersInRoom": null,
-        "NpcsInRoom": null,
+        "NpcsInRoom": [
+          {
+            "Name": "Captain Stormwind",
+            "TextToTell": "The Cloud Serpents threaten our airships. Take them down!",
+            "IsQuestGiver": true,
+            "QuestsToGive": [
+              {
+                "Name": "Serpent Scale",
+                "Description": "Kill 2 Cloud Serpents on the bridges.",
+                "ExperienceReward": 80,
+                "CoinsReward": 35,
+                "TargetEnemyName": "Cloud Serpent",
+                "RequiredKillCount": 2,
+                "CurrentKillCount": 0
+              }
+            ]
+          }
+        ],
         "EnemiesInRoom": [
           {
             "Name": "Cloud Serpent",
@@ -856,7 +1060,12 @@
       {
         "Name": "Sky Ring",
         "LevelOfRoom": 5,
-        "ConnectedRooms": [ "Sky Bridge North", "Sky Bridge East", "Sky Bridge South", "Sky Bridge West" ],
+        "ConnectedRooms": [
+          "Sky Bridge North",
+          "Sky Bridge East",
+          "Sky Bridge South",
+          "Sky Bridge West"
+        ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
         "EnemiesInRoom": [
@@ -1046,7 +1255,12 @@
       {
         "Name": "Citadel Ring",
         "LevelOfRoom": 6,
-        "ConnectedRooms": [ "Citadel Plaza North", "Citadel Plaza East", "Citadel Plaza South", "Citadel Plaza West" ],
+        "ConnectedRooms": [
+          "Citadel Plaza North",
+          "Citadel Plaza East",
+          "Citadel Plaza South",
+          "Citadel Plaza West"
+        ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
         "EnemiesInRoom": [
@@ -1129,7 +1343,24 @@
         "LevelOfRoom": 7,
         "ConnectedRooms": [ "Citadel Plaza East", "Sanctum Main Hall" ],
         "PlayersInRoom": null,
-        "NpcsInRoom": null,
+        "NpcsInRoom": [
+          {
+            "Name": "Ancient Spirit",
+            "TextToTell": "The Wraiths haunt these halls. Release them.",
+            "IsQuestGiver": true,
+            "QuestsToGive": [
+              {
+                "Name": "Wraith's Bane",
+                "Description": "Kill 2 Eldritch Wraiths in the gates.",
+                "ExperienceReward": 120,
+                "CoinsReward": 45,
+                "TargetEnemyName": "Eldritch Wraith",
+                "RequiredKillCount": 2,
+                "CurrentKillCount": 0
+              }
+            ]
+          }
+        ],
         "EnemiesInRoom": [
           {
             "Name": "Eldritch Guardian",
@@ -1241,7 +1472,14 @@
       {
         "Name": "Sanctum Main Hall",
         "LevelOfRoom": 8,
-        "ConnectedRooms": [ "Sanctum Gate North", "Sanctum Gate East", "Sanctum Gate South", "Sanctum Gate West", "Forbidden Library", "Boss Chamber" ],
+        "ConnectedRooms": [
+          "Sanctum Gate North",
+          "Sanctum Gate East",
+          "Sanctum Gate South",
+          "Sanctum Gate West",
+          "Forbidden Library",
+          "Boss Chamber"
+        ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
         "EnemiesInRoom": [
@@ -1281,7 +1519,24 @@
         "LevelOfRoom": 8,
         "ConnectedRooms": [ "Sanctum Main Hall" ],
         "PlayersInRoom": null,
-        "NpcsInRoom": null,
+        "NpcsInRoom": [
+          {
+            "Name": "Custodian of Tomes",
+            "TextToTell": "A spellbook has come alive! Destroy it before it spreads chaos.",
+            "IsQuestGiver": true,
+            "QuestsToGive": [
+              {
+                "Name": "Book Burner",
+                "Description": "Kill the Living Spellbook in the library.",
+                "ExperienceReward": 150,
+                "CoinsReward": 55,
+                "TargetEnemyName": "Living Spellbook",
+                "RequiredKillCount": 1,
+                "CurrentKillCount": 0
+              }
+            ]
+          }
+        ],
         "EnemiesInRoom": [
           {
             "Name": "Living Spellbook",
@@ -1332,7 +1587,7 @@
       {
         "Name": "Boss Chamber",
         "LevelOfRoom": 10,
-        "ConnectedRooms": [ "Sanctum Main Hall" ],
+        "ConnectedRooms": [ "Sanctum Main Hall", "Catacomb Entrance" ],
         "PlayersInRoom": null,
         "NpcsInRoom": null,
         "EnemiesInRoom": [
@@ -1373,6 +1628,225 @@
                 "StaminaBonus": 0,
                 "ArmorBonus": 20,
                 "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Helmet"
+              }
+            ]
+          }
+        ],
+        "DropedItems": []
+      }
+    ]
+  },
+  {
+    "NameOfMap": "Forgotten Catacombs",
+    "RoomsInMap": [
+      {
+        "Name": "Catacomb Entrance",
+        "LevelOfRoom": 9,
+        "ConnectedRooms": [ "Boss Chamber", "Hall of Bones" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Bone Wraith",
+            "Level": 9,
+            "MaxHealth": 120,
+            "Health": 120,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 80,
+            "Stamina": 80,
+            "AttackSpeed": 16,
+            "Strength": 30,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Hall of Bones",
+        "LevelOfRoom": 9,
+        "ConnectedRooms": [ "Catacomb Entrance", "Crypt of the Damned", "Chamber of Souls" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Skeleton Warrior",
+            "Level": 9,
+            "MaxHealth": 140,
+            "Health": 140,
+            "MaxShield": 15,
+            "Shield": 15,
+            "MaxStamina": 60,
+            "Stamina": 60,
+            "AttackSpeed": 10,
+            "Strength": 32,
+            "DroppingItems": [
+              {
+                "Name": "Bone Plate",
+                "Description": "A sturdy piece of bone armor. +10 shield.",
+                "Value": 50,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 0,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 10,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Armor"
+              }
+            ]
+          },
+          {
+            "Name": "Skeleton Archer",
+            "Level": 9,
+            "MaxHealth": 100,
+            "Health": 100,
+            "MaxShield": 5,
+            "Shield": 5,
+            "MaxStamina": 70,
+            "Stamina": 70,
+            "AttackSpeed": 14,
+            "Strength": 28,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Crypt of the Damned",
+        "LevelOfRoom": 9,
+        "ConnectedRooms": [ "Hall of Bones", "Lich's Lair" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Death Knight",
+            "Level": 9,
+            "MaxHealth": 180,
+            "Health": 180,
+            "MaxShield": 25,
+            "Shield": 25,
+            "MaxStamina": 50,
+            "Stamina": 50,
+            "AttackSpeed": 9,
+            "Strength": 38,
+            "DroppingItems": [
+              {
+                "Name": "Death Knight's Sword",
+                "Description": "A dark blade that feeds on life. +20 strength.",
+                "Value": 100,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 20,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Sword"
+              }
+            ]
+          },
+          {
+            "Name": "Crypt Wraith",
+            "Level": 9,
+            "MaxHealth": 110,
+            "Health": 110,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 100,
+            "Stamina": 100,
+            "AttackSpeed": 18,
+            "Strength": 26,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Chamber of Souls",
+        "LevelOfRoom": 9,
+        "ConnectedRooms": [ "Hall of Bones", "Lich's Lair" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Soul Reaper",
+            "Level": 9,
+            "MaxHealth": 130,
+            "Health": 130,
+            "MaxShield": 10,
+            "Shield": 10,
+            "MaxStamina": 90,
+            "Stamina": 90,
+            "AttackSpeed": 13,
+            "Strength": 34,
+            "DroppingItems": [
+              {
+                "Name": "Soul Scythe",
+                "Description": "A reaper's scythe that boosts strength by 18.",
+                "Value": 120,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 18,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 0,
+                "AttackSpeedBonus": 0,
+                "HealUPBonus": 0,
+                "TypeOfItem": "Sword"
+              }
+            ]
+          },
+          {
+            "Name": "Lost Soul",
+            "Level": 9,
+            "MaxHealth": 90,
+            "Health": 90,
+            "MaxShield": 0,
+            "Shield": 0,
+            "MaxStamina": 110,
+            "Stamina": 110,
+            "AttackSpeed": 20,
+            "Strength": 22,
+            "DroppingItems": []
+          }
+        ],
+        "DropedItems": []
+      },
+      {
+        "Name": "Lich's Lair",
+        "LevelOfRoom": 10,
+        "ConnectedRooms": [ "Crypt of the Damned", "Chamber of Souls" ],
+        "PlayersInRoom": null,
+        "NpcsInRoom": null,
+        "EnemiesInRoom": [
+          {
+            "Name": "Lich King",
+            "Level": 10,
+            "MaxHealth": 350,
+            "Health": 350,
+            "MaxShield": 40,
+            "Shield": 40,
+            "MaxStamina": 100,
+            "Stamina": 100,
+            "AttackSpeed": 12,
+            "Strength": 50,
+            "DroppingItems": [
+              {
+                "Name": "Crown of the Damned",
+                "Description": "Grants ultimate power. +30 strength, +20 shield, +15 attack speed.",
+                "Value": 300,
+                "IsStackable": false,
+                "IsEquippable": true,
+                "AttackBonus": 30,
+                "HealthBonus": 0,
+                "StaminaBonus": 0,
+                "ArmorBonus": 20,
+                "AttackSpeedBonus": 15,
                 "HealUPBonus": 0,
                 "TypeOfItem": "Helmet"
               }

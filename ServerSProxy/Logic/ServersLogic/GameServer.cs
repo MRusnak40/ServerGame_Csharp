@@ -28,7 +28,7 @@ namespace ServerSProxy
             myServer.Start();
             isRunning = true;
 
-            // Graceful shutdown
+            //  shutdown
             Console.CancelKeyPress += (s, e) =>
             {
                 e.Cancel = true;
@@ -49,7 +49,7 @@ namespace ServerSProxy
         private async void ServerLoop()
         {
             Console.WriteLine("Herni server byl spusten");
-            //zde se vytvari nove vlakno pro hrace
+            //new thread
             while (isRunning)
             {
                 try
@@ -66,8 +66,8 @@ namespace ServerSProxy
         }
 
 
-        //hracsky loop
-        //postarat se o mrtve loopy
+        //loop
+        //dead loops
         private async Task ClientLoop(TcpClient client)
         {
 
@@ -75,7 +75,7 @@ namespace ServerSProxy
 
             bool isFirstLogin = false;
 
-            //zde se vytvari novy hrac pro klienta
+            //new client create
             Player player = new Player();
 
             using var cts = new CancellationTokenSource();
@@ -96,7 +96,7 @@ namespace ServerSProxy
 
 
 
-                    //prihlaseni a nastavni jmena hrace, pokud se nepodari prihlasit, klient se odpoji
+                    //set palyer and login
 
 
                     bool clientConnect = await world.LogInPlayers(reader, writer, player);

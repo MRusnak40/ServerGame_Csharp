@@ -25,7 +25,7 @@ namespace ServerSProxy.Logic.GameWorldCode
 
         private List<Player> _accounts;
 
-        
+
         private readonly object _accountsLock = new object();
         private static readonly SemaphoreSlim _fileSemaphore = new SemaphoreSlim(1, 1);   // pro soubor
         private readonly SemaphoreSlim _roomSemaphore = new SemaphoreSlim(1, 1); //pristup k mkstnsotem
@@ -70,10 +70,12 @@ namespace ServerSProxy.Logic.GameWorldCode
                 { "chat", new Chat(player, this) },
                 { "help", new Help(player, this) },
                 { "stats", new ShowStats(player, this) },
-
-                
                 { "move", new Move(player, this) },
-                { "fight", new FightPlayer(player, this) },
+                { "fight", new FightEnemy(player, this) },
+                { "fightplr", new FightPlayer(player, this) },
+                { "trade", new Trade(player, this) },
+                { "pickup", new Pickup(player, this) },
+                { "takequest", new TakeQuest(player, this) }
             };
         }
 
@@ -204,7 +206,7 @@ namespace ServerSProxy.Logic.GameWorldCode
         public async Task LeaveRoomAsync(Player player)
         {
             if (MapsInGameWorld == null) return;
-            await _roomSemaphore.WaitAsync();   
+            await _roomSemaphore.WaitAsync();
             try
             {
                 MapsInGameWorld.ForEach(map =>
@@ -286,10 +288,10 @@ namespace ServerSProxy.Logic.GameWorldCode
 
             var bestRooms = candidates.Where(r => (r.PlayersInRoom?.Count ?? 0) == minPlayers).ToList();
 
-           
+
             Room chosen = bestRooms[new Random().Next(bestRooms.Count)];
 
-            
+
             await _roomSemaphore.WaitAsync();
             try
             {
@@ -629,7 +631,6 @@ namespace ServerSProxy.Logic.GameWorldCode
                 }
 
                 /*
-
                 WriteToConsole.TextToPlayer(player, "\n---------------------------------------------");
                 WriteToConsole.TextToPlayer(player, $"Player: {player.Name} | Class: {player.Class} \n" +
                     $" Level: {player.Level} | HP: {player.Health}/{player.MaxHealth} \n" +
@@ -637,17 +638,9 @@ namespace ServerSProxy.Logic.GameWorldCode
                     $" Strength: {player.Strength} | Attack Speed: {player.AttackSpeed} | Coins: {player.Coins}");
                 WriteToConsole.TextToPlayer(player, "\n---------------------------------------------");
                 WriteToConsole.TextToPlayer(player, "\nEnter command (type 'help' for a list of commands): ");
-
-
                 */
 
-
-
-
-
-
                 //command processing
-
                 string input = await WriteToConsole.TakeInput(player);
                 string commandKey = input.Split(' ')[0].ToLower();
 
@@ -660,6 +653,36 @@ namespace ServerSProxy.Logic.GameWorldCode
                     WriteToConsole.TextToPlayer(player, "Unknown command. Please try again.");
                 }
             }
+        }
+
+        // --------------------------------------------------
+        //  QUEST COMPLETION CHECK (called after enemy kill)
+        // --------------------------------------------------
+        public async Task CheckQuestCompletion(Player player, Enemy killedEnemy)
+        {
+            if (player.ActiveQuests == null || player.ActiveQuests.Count == 0)
+                return;
+
+            var completed = new List<Quest>();
+            foreach (var quest in player.ActiveQuests)
+            {
+                if (quest.TargetEnemyName != null &&
+                    quest.TargetEnemyName.Equals(killedEnemy.Name, StringComparison.OrdinalIgnoreCase) &&
+                    !quest.IsCompleted)
+                {
+                    quest.RecordKill();
+                    if (quest.IsCompleted)
+                    {
+                        player.Experience += quest.ExperienceReward;
+                        player.Coins += quest.CoinsReward;
+                        completed.Add(quest);
+                        await WriteToConsole.TextToPlayer(player, $">> Quest '{quest.Name}' completed! +{quest.ExperienceReward} XP, +{quest.CoinsReward} coins.");
+                    }
+                }
+            }
+
+            foreach (var quest in completed)
+                player.ActiveQuests.Remove(quest);
         }
     }
 }

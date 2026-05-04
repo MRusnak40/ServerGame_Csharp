@@ -3,10 +3,8 @@ using ServerSProxy.Logic.PlayerCode;
 using ServerSProxy.Logic.PlayerCode.Items;
 using ServerSProxy.Logic.ServersLogic;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,7 +16,6 @@ namespace ServerSProxy.Logic.Commands
 
         public override async Task<string> Execute()
         {
-            // Najdi místnost hráče
             Room room = FindPlayerRoom(_player);
             if (room == null)
             {
@@ -26,7 +23,6 @@ namespace ServerSProxy.Logic.Commands
                 return "error";
             }
 
-            // Snapshot droped items
             var items = room.DropedItems?.ToList() ?? new List<Item>();
             if (items.Count == 0)
             {
@@ -34,11 +30,12 @@ namespace ServerSProxy.Logic.Commands
                 return "error";
             }
 
-            // Vypiš položky
+            // show items
             var sb = new StringBuilder();
             sb.AppendLine("\nItems on ground:");
             for (int i = 0; i < items.Count; i++)
-                sb.AppendLine($" {i + 1}. {items[i].Name} (value: {items[i].Value})");
+                sb.AppendLine($" {i + 1}. {items[i].Name} (value: {items[i].Value})" +
+                              (items[i].IsEquippable ? " [Equippable]" : ""));
             await WriteToConsole.TextToPlayer(_player, sb.ToString());
 
             await WriteToConsole.TextToPlayer(_player, $"\n>> Choose item to pick up (1-{items.Count}) or 0 to cancel:");
@@ -51,40 +48,66 @@ namespace ServerSProxy.Logic.Commands
             if (idx == 0)
             {
                 await WriteToConsole.TextToPlayer(_player, ">> Pickup cancelled.");
-                return string.Empty;
+                return "cancelled";
             }
 
             Item chosen = items[idx - 1];
 
-            // Pokusíme se přidat do inventáře (pokud Inventory podporuje AddItem nebo veřejný List<Item>)
-            bool addedToInventory = TryAddToInventory(_player, chosen);
-
-            // Odeber z místnosti (bezpečně)
-            try
+            //  add to inventory
+            bool added = TryPickupItem(_player, chosen, room);
+            if (!added)
             {
-                room.DropedItems?.Remove(chosen);
-            }
-            catch { /* ignore */ }
+                await WriteToConsole.TextToPlayer(_player, ">> Your inventory is full. Would you like to drop an item to make room? (yes/no): ");
+                string answer = await WriteToConsole.TakeInput(_player);
+                if (answer?.Trim().ToLower() == "yes")
+                {
+                    // inventory and let player choose item to drop
+                    await WriteToConsole.TextToPlayer(_player, "Your inventory:");
+                    await ShowInventory();
+                    await WriteToConsole.TextToPlayer(_player, "Enter the number of the item to drop (or 0 to cancel): ");
+                    string dropInput = await WriteToConsole.TakeInput(_player);
+                    if (int.TryParse(dropInput, out int dropIdx) && dropIdx > 0 && dropIdx <= _player.Inventory.Items.Count)
+                    {
+                        Item toDrop = _player.Inventory.Items[dropIdx - 1];
+                        // dropped item is equipped unequip first
+                        if (toDrop.IsEquippable && _player.EquippedItems.ContainsKey(toDrop.TypeOfItem))
+                        {
+                            _player.UnequipItem(toDrop.TypeOfItem);
+                            await WriteToConsole.TextToPlayer(_player, $"Unequipped {toDrop.Name}.");
+                        }
+                        _player.Inventory.RemoveItem(toDrop);
+                        room.DropedItems.Add(toDrop);
+                        await WriteToConsole.TextToPlayer(_player, $"Dropped {toDrop.Name}.");
 
-            if (addedToInventory)
-            {
-                await WriteToConsole.TextToPlayer(_player, $">> You picked up: {chosen.Name}");
+                        // Now try again to pick up chosen item
+                        added = TryPickupItem(_player, chosen, room);
+                        if (added)
+                            await WriteToConsole.TextToPlayer(_player, $">> You picked up: {chosen.Name}");
+                        else
+                            await WriteToConsole.TextToPlayer(_player, ">> Failed to pick up item (still no space?).");
+                    }
+                    else
+                    {
+                        await WriteToConsole.TextToPlayer(_player, ">> Cancelled.");
+                    }
+                }
+                else
+                {
+                    await WriteToConsole.TextToPlayer(_player, ">> Pickup cancelled.");
+                }
             }
             else
             {
-                // fallback: přidej hodnotu jako mince
-                _player.Coins += chosen.Value;
-                await WriteToConsole.TextToPlayer(_player, $">> You picked up {chosen.Name} and sold it for {chosen.Value} coins (added to your coins).");
+                await WriteToConsole.TextToPlayer(_player, $">> You picked up: {chosen.Name}");
             }
 
-            // Notify other players in room
+            //  others info
             var others = room.PlayersInRoom?.Where(p => p.Name != _player.Name).ToList() ?? new List<Player>();
             if (others.Count > 0)
             {
                 await WriteToConsole.BroadcastAll($"\n[{room.Name}] {_player.Name} picked up {chosen.Name}.", others);
             }
 
-            // Uložit změny do GameWorld (pokud chcete persistovat, volitelné)
             try
             {
                 await _gameWorld.UpadateVluesForPlayerTOList(_player);
@@ -97,61 +120,39 @@ namespace ServerSProxy.Logic.Commands
 
         public override bool Exit() => false;
 
-        private bool TryAddToInventory(Player player, Item item)
+        private bool TryPickupItem(Player player, Item item, Room room)
         {
-            if (player.Inventory == null) return false;
-
-            try
+            if (player.Inventory.AddItem(item))
             {
-                var inv = player.Inventory;
-                var invType = inv.GetType();
-
-                // 1) metoda AddItem(Item)
-                var addMethod = invType.GetMethod("AddItem", new Type[] { typeof(Item) });
-                if (addMethod != null)
+                // remove from ground
+                room.DropedItems.Remove(item);
+                // Auto-equip if equippable
+                if (item.IsEquippable)
                 {
-                    addMethod.Invoke(inv, new object[] { item });
-                    return true;
+                    Item old = player.EquipItem(item);
+                    if (old != null)
+                    {
+                        room.DropedItems.Add(old);
+                        WriteToConsole.TextToPlayer(player, $"Unequipped {old.Name} and put it on the ground.");
+                    }
                 }
-
-                // 2) metoda Add(Item)
-                addMethod = invType.GetMethod("Add", new Type[] { typeof(Item) });
-                if (addMethod != null)
-                {
-                    addMethod.Invoke(inv, new object[] { item });
-                    return true;
-                }
-
-                // 3) veřejné pole / vlastnost typu List<Item>
-                var listProp = invType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                    .FirstOrDefault(p => typeof(IList).IsAssignableFrom(p.PropertyType) &&
-                                         p.PropertyType.IsGenericType &&
-                                         p.PropertyType.GetGenericArguments()[0] == typeof(Item));
-                if (listProp != null)
-                {
-                    var listObj = listProp.GetValue(inv) as IList;
-                    listObj?.Add(item);
-                    return true;
-                }
-
-                // 4) veřejné pole
-                var listField = invType.GetFields(BindingFlags.Public | BindingFlags.Instance)
-                    .FirstOrDefault(f => typeof(IList).IsAssignableFrom(f.FieldType) &&
-                                         f.FieldType.IsGenericType &&
-                                         f.FieldType.GetGenericArguments()[0] == typeof(Item));
-                if (listField != null)
-                {
-                    var listObj = listField.GetValue(inv) as IList;
-                    listObj?.Add(item);
-                    return true;
-                }
+                return true;
             }
-            catch
-            {
-                // ignore reflection errors, fallback níže
-            }
-
             return false;
+        }
+
+        private async Task ShowInventory()
+        {
+            var sb = new StringBuilder();
+            var items = _player.Inventory.Items;
+            for (int i = 0; i < items.Count; i++)
+            {
+                var it = items[i];
+                sb.AppendLine($" {i + 1}. {it.Name} (x{it.Quantity}) - Value {it.Value}" +
+                              (it.IsEquippable ? " [E]" : ""));
+            }
+            if (items.Count == 0) sb.AppendLine("  (empty)");
+            await WriteToConsole.TextToPlayer(_player, sb.ToString());
         }
 
         private Room FindPlayerRoom(Player player)
@@ -163,8 +164,7 @@ namespace ServerSProxy.Logic.Commands
                 foreach (var room in map.RoomsInMap.ToList())
                 {
                     if (room.PlayersInRoom == null) continue;
-                    var snapshot = room.PlayersInRoom.ToList();
-                    if (snapshot.Any(p => p.Name == player.Name))
+                    if (room.PlayersInRoom.Any(p => p.Name == player.Name))
                         return room;
                 }
             }

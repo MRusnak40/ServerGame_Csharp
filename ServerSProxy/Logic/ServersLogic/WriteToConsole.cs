@@ -2,7 +2,7 @@
 
 internal static class WriteToConsole
 {
-    // Pokud chcete per-player lock, použijte writer instance jako zámek.
+   
     public static async Task BroadcastAll(string message, List<Player> activePlayers)
     {
         Player[] snapshot;
@@ -39,7 +39,7 @@ internal static class WriteToConsole
 
         try
         {
-            // lock na writer instanci, aby se nepřepisovaly zprávy z více vláken
+            //stream writer isnt thread save
             lock (writer)
             {
                 writer.WriteLine(message);
@@ -48,7 +48,7 @@ internal static class WriteToConsole
         }
         catch
         {
-            // ticho: klient je pravděpodobně odpojený; volající by měl řešit cleanup
+            // disconected i guess
         }
     }
 }

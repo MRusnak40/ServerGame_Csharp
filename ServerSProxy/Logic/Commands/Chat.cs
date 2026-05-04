@@ -15,14 +15,14 @@ namespace ServerSProxy.Logic.Commands
 
         public override async Task<string> Execute()
         {
-            // 1. Začátek chatu – v chatu se nedá zabít
+            // chat start
             _player.IsKillable = false;
             await WriteToConsole.TextToPlayer(_player, "You entered chat mode.");
 
             bool chatting = true;
             while (chatting)
             {
-                // 2. Zeptáme se, co chce napsat
+                // what to text
                 await WriteToConsole.TextToPlayer(_player, "Message: ");
                 string message = await WriteToConsole.TakeInput(_player);
                 if (string.IsNullOrWhiteSpace(message))
@@ -68,7 +68,7 @@ namespace ServerSProxy.Logic.Commands
                 }
                 else if (!string.IsNullOrEmpty(target))
                 {
-                    // Soukromá zpráva – hledáme hráče podle jména
+                    // finding player
                     Player targetPlayer = _gameWorld.OnlinePlayers.Find(p =>
                         p.Name.Equals(target, StringComparison.OrdinalIgnoreCase));
 
@@ -78,9 +78,9 @@ namespace ServerSProxy.Logic.Commands
                     }
                     else
                     {
-                        // Odesílateli potvrzení
+                        // send
                         await WriteToConsole.TextToPlayer(_player, $"[To {targetPlayer.Name}]: {message}");
-                        // Příjemci zprávu
+                        
                         await WriteToConsole.TextToPlayer(targetPlayer, $"[From {_player.Name}]: {message}");
                     }
                 }
@@ -89,14 +89,14 @@ namespace ServerSProxy.Logic.Commands
                     await WriteToConsole.TextToPlayer(_player, "Invalid option. Use 'all' or exact player name.");
                 }
 
-                // 4. Zeptáme se, jestli chce pokračovat
+                // continue
                 await WriteToConsole.TextToPlayer(_player, "Continue chatting? (yes/no): ");
                 string answer = await WriteToConsole.TakeInput(_player);
                 if (answer?.Trim().ToLower() != "yes")
                     chatting = false;
             }
 
-            // 5. Konec chatu
+            //end
             _player.IsKillable = true;
             await WriteToConsole.TextToPlayer(_player, "You left chat mode.");
             return string.Empty;
