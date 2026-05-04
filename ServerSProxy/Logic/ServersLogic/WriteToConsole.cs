@@ -1,55 +1,54 @@
 ﻿using ServerSProxy.Logic.PlayerCode;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ServerSProxy.Logic.ServersLogic
+internal static class WriteToConsole
 {
-    internal class WriteToConsole
+    // Pokud chcete per-player lock, použijte writer instance jako zámek.
+    public static async Task BroadcastAll(string message, List<Player> activePlayers)
     {
-        /*
-        private List<Player> _activePlayers; 
+        Player[] snapshot;
+        lock (activePlayers) snapshot = activePlayers.ToArray();
 
-        public WriteToConsole(List<Player> activePlayers)
+        foreach (var player in snapshot)
         {
-            _activePlayers = activePlayers;
+            await SafeWrite(player, message);
         }
-        */
+    }
 
-        // vsem hracum zprava
-        public static async Task BroadcastAll(string message, List<Player> _activePlayers)
+    public static Task TextToPlayer(Player player, string message) => SafeWrite(player, message);
+
+    public static Task TextToPlayerOneLine(Player player, string message) => SafeWrite(player, message);
+
+    public static async Task<string> TakeInput(Player player)
+    {
+        try
         {
-            
-            var players = _activePlayers.ToArray();
-            foreach (Player player in players)
+            if (player?.Reader == null) return "";
+            return await player.Reader.ReadLineAsync() ?? "";
+        }
+        catch
+        {
+            return "";
+        }
+    }
+
+    private static async Task SafeWrite(Player player, string message)
+    {
+        if (player == null) return;
+        var writer = player.Writer;
+        if (writer == null) return;
+
+        try
+        {
+            // lock na writer instanci, aby se nepřepisovaly zprávy z více vláken
+            lock (writer)
             {
-                await player.Writer.WriteLineAsync(message);
+                writer.WriteLine(message);
             }
+            await writer.FlushAsync();
         }
-
-        // dany hrac zprava
-        public static async Task TextToPlayer(Player player, string message)
+        catch
         {
-            await player.Writer.WriteLineAsync(message);
-        }
-
-      
-
-        //vrati od hrace
-        public static async Task<string> TakeInput(Player player) {
-
-            // await player.Writer.WriteAsync("Command: ");
-            /*
-            await player.Writer.WriteAsync("\n ❯ ");
-            await player.Writer.FlushAsync(); 
-            */
-
-            string input = await player.Reader.ReadLineAsync();
-            return input ?? "";
-
-           
+            // ticho: klient je pravděpodobně odpojený; volající by měl řešit cleanup
         }
     }
 }

@@ -11,438 +11,389 @@ namespace ServerSProxy.Logic.Commands
 {
     internal class FightPlayer : Command
     {
-        public FightPlayer(Player player, GameWorld gameWorld) : base(player, gameWorld)
-        {
-        }
+        private const int ROUND_TIMEOUT_MS = 15000;   // 15 s na každé kolo
+        private const int CLEANUP_TIMEOUT_MS = 2000;  // 2 s na vyčištění vstupu druhého hráče
+
+        public FightPlayer(Player player, GameWorld gameWorld) : base(player, gameWorld) { }
 
         public override async Task<string> Execute()
         {
-            // check if already in combat
             if (_player.IsInCombat)
             {
-                await WriteToConsole.TextToPlayer(_player, "\nerror: you are already in combat!");
+                await SafeWrite(_player, ">> You are already in combat!");
                 return "error";
             }
 
-            // find current room
-            Room currentRoom = GetPlayerRoom(_player);
-            if (currentRoom == null)
+            Room room = FindPlayerRoom(_player);
+            if (room == null)
             {
-                await WriteToConsole.TextToPlayer(_player, "\nerror: room not found!");
+                await SafeWrite(_player, ">> Room not found!");
                 return "error";
             }
 
-            // get list of available opponents (players in room, excluding self)
-            List<Player> availableOpponents = currentRoom.PlayersInRoom
-                ?.Where(p => p.Name != _player.Name && !p.IsInCombat)
-                .ToList() ?? new List<Player>();
+            // snapshot hráčů v místnosti
+            var playersSnapshot = room.PlayersInRoom?.ToList() ?? new List<Player>();
 
-            if (availableOpponents.Count == 0)
+            // debug (odkomentujte pokud chcete)
+            // await SafeWrite(_player, "DEBUG: players in room: " + string.Join(", ", playersSnapshot.Select(x => $"{x.Name}(InCombat={x.IsInCombat},Killable={x.IsKillable})")));
+
+            var opponents = playersSnapshot
+                .Where(p => p.Name != _player.Name && !p.IsInCombat && p.IsKillable)
+                .ToList();
+
+            if (opponents.Count == 0)
             {
-                await WriteToConsole.TextToPlayer(_player, "\nerror: no opponents available in this room!");
+                await SafeWrite(_player, ">> No opponents available.");
                 return "error";
             }
 
-            // display opponents list
-            await DisplayOpponents(availableOpponents);
-
-            // get opponent selection
-            await WriteToConsole.TextToPlayer(_player, "\n > select opponent (1-" + availableOpponents.Count + "): ");
-            string? choice = await WriteToConsole.TakeInput(_player);
-
-            if (!int.TryParse(choice, out int opponentChoice) || opponentChoice < 1 || opponentChoice > availableOpponents.Count)
+            await ShowOpponents(opponents);
+            await SafeWrite(_player, "\n>> Choose opponent (1-" + opponents.Count + "): ");
+            string choice = await ReadLineSafe(_player);
+            if (!int.TryParse(choice, out int idx) || idx < 1 || idx > opponents.Count)
             {
-                await WriteToConsole.TextToPlayer(_player, "\nerror: invalid choice!");
+                await SafeWrite(_player, ">> Invalid choice.");
                 return "error";
             }
 
-            // get selected opponent
-            Player opponent = availableOpponents[opponentChoice - 1];
+            Player opponent = opponents[idx - 1];
 
-            // start fight
             await RunFight(_player, opponent);
-
             return "fight";
         }
 
         public override bool Exit() => false;
 
-        private async Task DisplayOpponents(List<Player> opponents)
+        // ------------------------------------------------------------------------
+        //  Hlavní bojová smyčka
+        // ------------------------------------------------------------------------
+        private async Task RunFight(Player p1, Player p2)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("\n");
-            sb.AppendLine("  ╔═══════════════════════════════════════════════════════╗");
-            sb.AppendLine("  ║           SELECT AN OPPONENT TO FIGHT                 ║");
-            sb.AppendLine("  ╠═══════════════════════════════════════════════════════╣");
+            // Inicializace
+            p1.Stamina = p1.MaxStamina;
+            p2.Stamina = p2.MaxStamina;
+            p1.IsInCombat = true;
+            p2.IsInCombat = true;
 
-            for (int i = 0; i < opponents.Count; i++)
+            await ShowFightStart(p1, p2);
+
+            while (p1.Health > 0 && p2.Health > 0)
             {
-                Player opp = opponents[i];
-                string healthBar = GetHealthBar(opp.Health, opp.MaxHealth);
-                sb.AppendLine($"  ║ {i + 1}. {opp.Name.PadRight(20)} │ lvl {opp.Level.ToString().PadRight(2)} │ {healthBar}║");
-            }
+                await ShowFightStatus(p1, p2);
 
-            sb.AppendLine("  ╚═══════════════════════════════════════════════════════╝");
+                // Spustíme asynchronní čtení pro oba hráče
+                Task<string> task1 = GetTimedInputAsync(p1, "Your attack (fast/heavy/careful): ", ROUND_TIMEOUT_MS);
+                Task<string> task2 = GetTimedInputAsync(p2, "Your attack (fast/heavy/careful): ", ROUND_TIMEOUT_MS);
 
-            await WriteToConsole.TextToPlayer(_player, sb.ToString());
-        }
+                Task completedTask = await Task.WhenAny(task1, task2);
+                Player first = (completedTask == task1) ? p1 : p2;
+                Player second = (completedTask == task1) ? p2 : p1;
+                string firstMove = await (completedTask == task1 ? task1 : task2);
 
-        private async Task RunFight(Player player1, Player player2)
-        {
-            // set both in combat
-            player1.IsInCombat = true;
-            player2.IsInCombat = true;
-
-            // restore stamina to max
-            player1.Stamina = player1.MaxStamina;
-            player2.Stamina = player2.MaxStamina;
-
-            // announce fight start
-            await DisplayFightStart(player1, player2);
-
-            // fight loop
-            while (player1.Health > 0 && player2.Health > 0)
-            {
-                // display current state
-                await DisplayFightState(player1, player2);
-
-                // get moves from both players
-                await WriteToConsole.TextToPlayer(player1, " > your move (fast/heavy/careful): ");
-                string? move1 = await WriteToConsole.TakeInput(player1);
-
-                await WriteToConsole.TextToPlayer(player2, " > your move (fast/heavy/careful): ");
-                string? move2 = await WriteToConsole.TakeInput(player2);
-
-                // process round
-                await ProcessRound(player1, player2, move1, move2);
-            }
-
-            // determine winner and loser
-            Player winner = player1.Health > 0 ? player1 : player2;
-            Player loser = player1.Health > 0 ? player2 : player1;
-
-            // display victory
-            await DisplayFightEnd(winner, loser);
-
-            // apply fight results
-            ApplyFightResults(winner, loser);
-
-            // end combat
-            player1.IsInCombat = false;
-            player2.IsInCombat = false;
-
-            // loser goes to lobby
-            loser.IsAlive = false;
-        }
-
-        private async Task DisplayFightStart(Player player1, Player player2)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("\n");
-            sb.AppendLine("  ╔═══════════════════════════════════════════════════════╗");
-            sb.AppendLine("  ║                      ⚔  BATTLE START  ⚔              ║");
-            sb.AppendLine("  ╠═══════════════════════════════════════════════════════╣");
-            sb.AppendLine($"  ║  * {player1.Name.PadRight(20)} VS {player2.Name.PadRight(19)} *  ║");
-            sb.AppendLine("  ║                                                       ║");
-            sb.AppendLine("  ║  attack types:                                        ║");
-            sb.AppendLine("  ║    • fast    - 40% dmg, 10% stamina, can spam         ║");
-            sb.AppendLine("  ║    • careful - 70% dmg, 20% stamina, balanced         ║");
-            sb.AppendLine("  ║    • heavy   - 100% dmg, 30% stamina, slow cooldown   ║");
-            sb.AppendLine("  ║                                                       ║");
-            sb.AppendLine("  ╚═══════════════════════════════════════════════════════╝");
-            sb.AppendLine();
-
-            await WriteToConsole.TextToPlayer(player1, sb.ToString());
-            await WriteToConsole.TextToPlayer(player2, sb.ToString());
-        }
-
-        private async Task DisplayFightState(Player player1, Player player2)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("\n  ╔═══════════════════════════════════════════════════════╗");
-            sb.AppendLine("  ║                      ⚔  BATTLE ⚔                     ║");
-            sb.AppendLine("  ╠═══════════════════════════════════════════════════════╣");
-
-            // player 1 stats
-            string hp1Bar = GetHealthBar(player1.Health, player1.MaxHealth);
-            string stam1Bar = GetStaminaBar(player1.Stamina, player1.MaxStamina);
-            sb.AppendLine($"  ║ {player1.Name.PadRight(28)}║");
-            sb.AppendLine($"  ║ hp:  {hp1Bar}║");
-            sb.AppendLine($"  ║ stm: {stam1Bar}║");
-
-            sb.AppendLine("  ╠═══════════════════════════════════════════════════════╣");
-
-            // player 2 stats
-            string hp2Bar = GetHealthBar(player2.Health, player2.MaxHealth);
-            string stam2Bar = GetStaminaBar(player2.Stamina, player2.MaxStamina);
-            sb.AppendLine($"  ║ {player2.Name.PadRight(28)}║");
-            sb.AppendLine($"  ║ hp:  {hp2Bar}║");
-            sb.AppendLine($"  ║ stm: {stam2Bar}║");
-
-            sb.AppendLine("  ╚═══════════════════════════════════════════════════════╝");
-
-            await WriteToConsole.TextToPlayer(player1, sb.ToString());
-            await WriteToConsole.TextToPlayer(player2, sb.ToString());
-        }
-
-        private async Task DisplayFightEnd(Player winner, Player loser)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("\n");
-            sb.AppendLine("  ╔═══════════════════════════════════════════════════════╗");
-            sb.AppendLine("  ║                     * BATTLE OVER *                   ║");
-            sb.AppendLine("  ╠═══════════════════════════════════════════════════════╣");
-            sb.AppendLine($"  ║  WINNER: {winner.Name.PadRight(45)}║");
-            sb.AppendLine($"  ║  LOSER:  {loser.Name.PadRight(45)}║");
-            sb.AppendLine("  ╚═══════════════════════════════════════════════════════╝");
-            sb.AppendLine();
-
-            await WriteToConsole.TextToPlayer(winner, sb.ToString());
-            await WriteToConsole.TextToPlayer(loser, sb.ToString());
-        }
-
-        private async Task ProcessRound(Player p1, Player p2, string? move1, string? move2)
-        {
-            // parse attack types
-            AttackType type1 = ParseAttackType(move1);
-            AttackType type2 = ParseAttackType(move2);
-
-            // calculate attack timing based on attack speed and type
-            float timing1 = GetAttackTiming(p1, type1);
-            float timing2 = GetAttackTiming(p2, type2);
-
-            // determine attack order
-            if (timing1 < timing2)
-            {
-                // player1 attacks first
-                await AttackPlayer(p1, p2, type1);
-                if (p2.Health > 0)
-                    await AttackPlayer(p2, p1, type2);
-            }
-            else
-            {
-                // player2 attacks first
-                await AttackPlayer(p2, p1, type2);
-                if (p1.Health > 0)
-                    await AttackPlayer(p1, p2, type1);
-            }
-
-            // regenerate stamina for both
-            RegenerateStamina(p1);
-            RegenerateStamina(p2);
-        }
-
-        private enum AttackType
-        {
-            Fast,
-            Heavy,
-            Careful
-        }
-
-        private AttackType ParseAttackType(string? input)
-        {
-            // parse attack type from input
-            return input?.ToLower() switch
-            {
-                "fast" => AttackType.Fast,
-                "heavy" => AttackType.Heavy,
-                "careful" => AttackType.Careful,
-                _ => AttackType.Careful
-            };
-        }
-
-        private float GetAttackTiming(Player player, AttackType type)
-        {
-            // calculate timing in milliseconds
-            // lower = faster attack
-            // heavy = 3x longer cooldown (harder to spam)
-            // fast = 1x
-            // careful = 1x
-
-            float baseTiming = 1000f / player.AttackSpeed;
-
-            return type switch
-            {
-                AttackType.Heavy => baseTiming * 3,
-                AttackType.Fast => baseTiming,
-                AttackType.Careful => baseTiming,
-                _ => baseTiming
-            };
-        }
-
-        private async Task AttackPlayer(Player attacker, Player defender, AttackType type)
-        {
-            // check if enough stamina
-            int staminaCost = GetStaminaCost(type);
-            if (attacker.Stamina < staminaCost)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine($"\n [!] {attacker.Name} tried to use {type} but not enough stamina!");
-                await WriteToConsole.TextToPlayer(attacker, sb.ToString());
-                await WriteToConsole.TextToPlayer(defender, sb.ToString());
-                return;
-            }
-
-            // deduct stamina
-            attacker.Stamina -= staminaCost;
-
-            // calculate damage
-            int damage = GetDamage(attacker, type);
-
-            // apply damage
-            defender.Health -= damage;
-            if (defender.Health < 0)
-                defender.Health = 0;
-
-            // notify both players with fancy output
-            StringBuilder msg = new StringBuilder();
-            msg.AppendLine();
-            msg.AppendLine($"  ║ > {attacker.Name} uses [{type.ToString().ToUpper()}] attack!");
-            msg.AppendLine($"  ║   {defender.Name} takes ~ {damage} damage!");
-
-            await WriteToConsole.TextToPlayer(attacker, msg.ToString());
-            await WriteToConsole.TextToPlayer(defender, msg.ToString());
-        }
-
-        private int GetStaminaCost(AttackType type)
-        {
-            // stamina cost as percentage of max stamina
-            return type switch
-            {
-                AttackType.Heavy => 30,   // 30% cost - hard to spam
-                AttackType.Fast => 10,    // 10% cost - easy to spam but low damage
-                AttackType.Careful => 20, // 20% cost - balanced
-                _ => 20
-            };
-        }
-
-        private int GetDamage(Player player, AttackType type)
-        {
-            // damage as percentage of strength
-            return type switch
-            {
-                AttackType.Heavy => (int)(player.Strength * 1.0f), // 100% damage - best but hard to use
-                AttackType.Fast => (int)(player.Strength * 0.4f),  // 40% damage - worst damage
-                AttackType.Careful => (int)(player.Strength * 0.7f), // 70% damage - balanced
-                _ => (int)(player.Strength * 0.7f)
-            };
-        }
-
-        private void RegenerateStamina(Player player)
-        {
-            // slow stamina regeneration per round (5%)
-            int regen = (int)(player.MaxStamina * 0.05f);
-            player.Stamina += regen;
-            if (player.Stamina > player.MaxStamina)
-                player.Stamina = player.MaxStamina;
-        }
-
-        private void ApplyFightResults(Player winner, Player loser)
-        {
-            // winner gets 50% of loser coins
-            int coinReward = (int)(loser.Coins * 0.5f);
-            winner.Coins += coinReward;
-
-            // loser loses coins
-            loser.Coins = Math.Max(0, loser.Coins - coinReward);
-
-            // winner gets all loser xp
-            int xpReward = loser.Experience;
-            winner.Experience += xpReward;
-
-            // loser loses all xp
-            loser.Experience = 0;
-
-            // loser loses 1 level if not already level 1
-            if (loser.Level > 1)
-                loser.Level--;
-
-            // notify with fancy output
-            Task.Run(async () =>
-            {
-                StringBuilder winMsg = new StringBuilder();
-                winMsg.AppendLine("\n");
-                winMsg.AppendLine("  ╔═══════════════════════════════════════════════════════╗");
-                winMsg.AppendLine("  ║                  * YOU WIN! *                       ║");
-                winMsg.AppendLine("  ╠═══════════════════════════════════════════════════════╣");
-                winMsg.AppendLine($"  ║  +{coinReward.ToString().PadRight(3)} coins                                       ║");
-                winMsg.AppendLine($"  ║  +{xpReward.ToString().PadRight(3)} experience                                   ║");
-                winMsg.AppendLine("  ╚═══════════════════════════════════════════════════════╝");
-                winMsg.AppendLine();
-                await WriteToConsole.TextToPlayer(winner, winMsg.ToString());
-
-                StringBuilder loseMsg = new StringBuilder();
-                loseMsg.AppendLine("\n");
-                loseMsg.AppendLine("  ╔═══════════════════════════════════════════════════════╗");
-                loseMsg.AppendLine("  ║                  ~ YOU LOST! ~                      ║");
-                loseMsg.AppendLine("  ╠═══════════════════════════════════════════════════════╣");
-                loseMsg.AppendLine($"  ║  -{coinReward.ToString().PadRight(3)} coins                                       ║");
-                loseMsg.AppendLine($"  ║  -{xpReward.ToString().PadRight(3)} experience                                   ║");
-                if (loser.Level > 1)
-                    loseMsg.AppendLine($"  ║  -1  level                                             ║");
-                loseMsg.AppendLine("  ╚═══════════════════════════════════════════════════════╝");
-                loseMsg.AppendLine();
-                await WriteToConsole.TextToPlayer(loser, loseMsg.ToString());
-            });
-        }
-
-        private Room GetPlayerRoom(Player player)
-        {
-            // search all maps to find which room contains player
-            foreach (var map in _gameWorld.MapsInGameWorld)
-            {
-                if (map.RoomsInMap != null)
+                // Pokud první hráč nestihl timeout → okamžitě prohrává
+                if (string.IsNullOrEmpty(firstMove))
                 {
-                    foreach (var room in map.RoomsInMap)
+                    first.Health = 0;
+                    if (!await SafeWrite(first, "\n⏰ Time's up! You lost the fight."))
                     {
-                        if (room.PlayersInRoom != null && room.PlayersInRoom.Contains(player))
-                            return room;
+                        await HandleDisconnectDuringFight(first, second);
+                        break;
                     }
+                    if (!await SafeWrite(second, $"\n🏆 {first.Name} didn't respond. You win!"))
+                    {
+                        await HandleDisconnectDuringFight(second, first);
+                        break;
+                    }
+                    break;
                 }
+
+                // První útok
+                bool ok = await ApplyAttack(first, second, firstMove);
+                if (!ok) { await HandleDisconnectDuringFight(first, second); break; }
+                if (second.Health <= 0) break;
+
+                // Teď zkusíme získat útok od druhého hráče (krátký timeout pro vyčištění bufferu)
+                Task<string> secondTask = (completedTask == task1) ? task2 : task1;
+                string secondMove = await GetRemainingInputAsync(secondTask, CLEANUP_TIMEOUT_MS);
+
+                if (!string.IsNullOrEmpty(secondMove))
+                {
+                    ok = await ApplyAttack(second, first, secondMove);
+                    if (!ok) { await HandleDisconnectDuringFight(second, first); break; }
+                    if (first.Health <= 0) break;
+                }
+
+                // Regenerace staminy
+                RegenerateStamina(p1);
+                RegenerateStamina(p2);
             }
+
+            // Konec boje – určit vítěze (pokud někdo zůstal naživu)
+            Player winner = p1.Health > 0 ? p1 : p2;
+            Player loser = p1.Health > 0 ? p2 : p1;
+
+            ApplyResults(winner, loser);
+
+            p1.IsInCombat = false;
+            p2.IsInCombat = false;
+
+            // Pokus o uložení stavu (neblokovat server při chybě)
+            try
+            {
+                await _gameWorld.UpadateVluesForPlayerTOList(winner);
+                await _gameWorld.UpadateVluesForPlayerTOList(loser);
+                await _gameWorld.SavePlayersList();
+            }
+            catch { }
+
+            await ShowFightEnd(winner, loser);
+        }
+
+        // ------------------------------------------------------------------------
+        //  Pomocné metody
+        // ------------------------------------------------------------------------
+
+        /// <summary> Vrátí vstup hráče do timeoutu, jinak null. </summary>
+        private async Task<string> GetTimedInputAsync(Player player, string prompt, int timeoutMs)
+        {
+            try
+            {
+                if (!await SafeWrite(player, prompt)) return null;
+            }
+            catch { return null; }
+
+            var readTask = player.Reader.ReadLineAsync();
+            var delayTask = Task.Delay(timeoutMs);
+
+            if (await Task.WhenAny(readTask, delayTask) == readTask)
+                return await readTask;
+
+            // Timeout – hráč nic nenapsal
+            await SafeWrite(player, "\n⏰ Time's up!");
             return null;
         }
 
-        private string GetHealthBar(int current, int max)
+        /// <summary> Vyčte zbývající vstup z již běžícího tasku (nebo vrátí null při timeoutu). </summary>
+        private async Task<string> GetRemainingInputAsync(Task<string> existingReadTask, int timeoutMs)
         {
-            // create visual health bar
-            int barLength = 25;
-            float percentage = (float)current / max;
-            int filledLength = (int)(barLength * percentage);
+            if (existingReadTask.IsCompleted)
+                return await existingReadTask;  // už mám výsledek
 
-            StringBuilder bar = new StringBuilder();
-            bar.Append("[");
-            for (int i = 0; i < barLength; i++)
-            {
-                if (i < filledLength)
-                    bar.Append("█");
-                else
-                    bar.Append("░");
-            }
-            bar.Append("]");
+            var delayTask = Task.Delay(timeoutMs);
+            if (await Task.WhenAny(existingReadTask, delayTask) == existingReadTask)
+                return await existingReadTask;
 
-            return bar.ToString();
+            return null; // druhý hráč nic dalšího nenapsal
         }
 
-        private string GetStaminaBar(int current, int max)
+        /// <summary>
+        /// Aplikuje útok; vrací false pokud došlo k IO chybě při notifikaci (pak volat HandleDisconnectDuringFight).
+        /// </summary>
+        private async Task<bool> ApplyAttack(Player attacker, Player defender, string move)
         {
-            // create visual stamina bar
-            int barLength = 25;
-            float percentage = (float)current / max;
-            int filledLength = (int)(barLength * percentage);
-
-            StringBuilder bar = new StringBuilder();
-            bar.Append("[");
-            for (int i = 0; i < barLength; i++)
+            AttackType type = ParseAttack(move);
+            int cost = GetStaminaCost(type);
+            if (attacker.Stamina < cost)
             {
-                if (i < filledLength)
-                    bar.Append("▓");
-                else
-                    bar.Append("░");
+                if (!await SafeWrite(attacker, $">> Not enough stamina for {type}!")) return false;
+                if (!await SafeWrite(defender, $">> {attacker.Name} tried {type} but lacks stamina.")) return false;
+                return true;
             }
-            bar.Append("]");
+            attacker.Stamina -= cost;
+            int dmg = GetDamage(attacker, type);
+            defender.Health = Math.Max(0, defender.Health - dmg);
 
-            return bar.ToString();
+            string msg = $"[{type.ToString().ToUpper()}] {attacker.Name} → {defender.Name} (-{dmg} HP)";
+            if (!await SafeWrite(attacker, msg)) return false;
+            if (!await SafeWrite(defender, msg)) return false;
+            return true;
+        }
+
+        private enum AttackType { Fast, Heavy, Careful }
+        private AttackType ParseAttack(string input) =>
+            input?.Trim().ToLower() switch
+            {
+                "heavy" => AttackType.Heavy,
+                "fast" => AttackType.Fast,
+                _ => AttackType.Careful
+            };
+
+        private int GetStaminaCost(AttackType type) =>
+            type switch
+            {
+                AttackType.Heavy => Math.Max(1, (int)(0.30 * _player.MaxStamina)),
+                AttackType.Fast => Math.Max(1, (int)(0.10 * _player.MaxStamina)),
+                _ => Math.Max(1, (int)(0.20 * _player.MaxStamina))
+            };
+
+        private int GetDamage(Player attacker, AttackType type) =>
+            type switch
+            {
+                AttackType.Heavy => attacker.Strength,
+                AttackType.Fast => (int)(attacker.Strength * 0.4),
+                AttackType.Careful => (int)(attacker.Strength * 0.7),
+                _ => (int)(attacker.Strength * 0.7)
+            };
+
+        private void RegenerateStamina(Player p) =>
+            p.Stamina = Math.Min(p.Stamina + Math.Max(1, (int)(p.MaxStamina * 0.03)), p.MaxStamina);
+
+        private void ApplyResults(Player winner, Player loser)
+        {
+            int coinLoss = Math.Min(loser.Coins, 50);
+            winner.Coins += coinLoss;
+            loser.Coins -= coinLoss;
+
+            int xpLoss = Math.Min(loser.Experience, 100);
+            winner.Experience += xpLoss;
+            loser.Experience -= xpLoss;
+
+            if (loser.Level > 1) loser.Level--;
+            loser.Health = 0;   // zajištěno, že GameLoop ho pošle do lobby
+        }
+
+        // ------------------------------------------------------------------------
+        //  Bezpečný zápis a ošetření odpojení
+        // ------------------------------------------------------------------------
+
+        /// <summary>
+        /// Bezpečně zapíše zprávu hráči. Vrací true pokud zápis proběhl, false pokud došlo k chybě (např. odpojení).
+        /// Používá lokální lock na writeru, aby se zabránilo souběžným zápisům z tohoto kódu.
+        /// </summary>
+        private async Task<bool> SafeWrite(Player p, string msg)
+        {
+            if (p == null) return false;
+            try
+            {
+                var w = p.Writer;
+                if (w == null) return false;
+
+                // lock na writer instanci (serializuje zápisy z tohoto místa)
+                lock (w)
+                {
+                    try
+                    {
+                        w.WriteLine(msg);
+                    }
+                    catch
+                    {
+                        // pokud WriteLine vyhodí, necháme to padnout do catch níže
+                        throw;
+                    }
+                }
+
+                // flush asynchronně mimo lock
+                await w.FlushAsync();
+                return true;
+            }
+            catch
+            {
+                // IO chyba nebo writer uzavřený
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Korektní ukončení boje pokud se hráč odpojil nebo došlo k IO chybě.
+        /// Oznamí druhému hráči výhru, aktualizuje stavy a uloží.
+        /// </summary>
+        private async Task HandleDisconnectDuringFight(Player disconnected, Player other)
+        {
+            try
+            {
+                // Oznamit druhému hráči (pokud to jde)
+                await SafeWrite(other, "\n[FIGHT] Opponent disconnected. You win!");
+            }
+            catch { }
+
+            // Uvolnit příznaky
+            try { disconnected.IsInCombat = false; } catch { }
+            try { other.IsInCombat = false; } catch { }
+
+            // Označit odpojeného jako mrtvého, aby GameLoop ho poslal do lobby
+            try { disconnected.Health = 0; } catch { }
+
+            // Aktualizovat a uložit stavy (neblokovat při chybě)
+            try
+            {
+                await _gameWorld.UpadateVluesForPlayerTOList(other);
+                await _gameWorld.UpadateVluesForPlayerTOList(disconnected);
+                await _gameWorld.SavePlayersList();
+            }
+            catch { }
+        }
+
+        // ------------------------------------------------------------------------
+        //  Výpisy (bezpečné proti výjimkám)
+        // ------------------------------------------------------------------------
+        private async Task<string> ReadLineSafe(Player p)
+        {
+            try { return await p.Reader.ReadLineAsync(); } catch { return null; }
+        }
+
+        private async Task ShowOpponents(List<Player> list)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("\n╔══════════════════════════════════╗");
+            sb.AppendLine("║       AVAILABLE OPPONENTS        ║");
+            sb.AppendLine("╠══════════════════════════════════╣");
+            for (int i = 0; i < list.Count; i++)
+                sb.AppendLine($"║ {i + 1}. {list[i].Name,-22} ║");
+            sb.AppendLine("╚══════════════════════════════════╝");
+            await SafeWrite(_player, sb.ToString());
+        }
+
+        private async Task ShowFightStart(Player a, Player b)
+        {
+            string msg = "\n⚔️ FIGHT! ⚔️\n" +
+                         $"{a.Name}  vs  {b.Name}\n" +
+                         "Commands: fast (40% dmg, low stam) | careful (70% dmg, med stam) | heavy (100% dmg, high stam)\n" +
+                         "First to type attacks first!";
+            await SafeWrite(a, msg);
+            await SafeWrite(b, msg);
+        }
+
+        private async Task ShowFightStatus(Player a, Player b)
+        {
+            string Bar(int cur, int max) =>
+                new string('█', (int)((double)cur / max * 15)).PadRight(15, '░');
+
+            string hpA = Bar(a.Health, a.MaxHealth);
+            string hpB = Bar(b.Health, b.MaxHealth);
+            string stA = Bar(a.Stamina, a.MaxStamina);
+            string stB = Bar(b.Stamina, b.MaxStamina);
+
+            string viewA = $"You:      HP [{hpA}] Stam [{stA}]\nOpponent: HP [{hpB}] Stam [{stB}]";
+            string viewB = $"You:      HP [{hpB}] Stam [{stB}]\nOpponent: HP [{hpA}] Stam [{stA}]";
+
+            await SafeWrite(a, viewA);
+            await SafeWrite(b, viewB);
+        }
+
+        private async Task ShowFightEnd(Player winner, Player loser)
+        {
+            string winMsg = $"\n🏆 YOU WIN! +{winner.Coins}c +{winner.Experience}xp";
+            string loseMsg = $"\n💀 YOU LOSE! -{loser.Coins}c -{loser.Experience}xp lvl -1\nReturning to lobby...";
+
+            await SafeWrite(winner, winMsg);
+            await SafeWrite(loser, loseMsg);
+        }
+
+        private Room FindPlayerRoom(Player player)
+        {
+            if (_gameWorld.MapsInGameWorld == null) return null;
+            foreach (var map in _gameWorld.MapsInGameWorld.ToList())
+            {
+                if (map.RoomsInMap == null) continue;
+                foreach (var room in map.RoomsInMap.ToList())
+                {
+                    if (room.PlayersInRoom == null) continue;
+                    var snapshot = room.PlayersInRoom.ToList();
+                    if (snapshot.Any(p => p.Name == player.Name))
+                        return room;
+                }
+            }
+            return null;
         }
     }
 }

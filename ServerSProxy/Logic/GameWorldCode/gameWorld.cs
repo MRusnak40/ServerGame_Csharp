@@ -378,6 +378,10 @@ namespace ServerSProxy.Logic.GameWorldCode
                         player.Inventory = p.Inventory;
                         player.ActiveQuests = p.ActiveQuests;
                         player.IsAlive = p.IsAlive;
+                        player.IsInCombat = p.IsInCombat;
+                        player.IsKillable = p.IsKillable;
+                        player.LastActive = p.LastActive;
+
                         break;
                     }
                 }
