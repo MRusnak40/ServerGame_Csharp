@@ -641,6 +641,9 @@ namespace ServerSProxy.Logic.GameWorldCode
                 */
 
                 //command processing
+
+
+                ///is pending reseni fight a trade 
                 string input = await WriteToConsole.TakeInput(player);
                 string commandKey = input.Split(' ')[0].ToLower();
 

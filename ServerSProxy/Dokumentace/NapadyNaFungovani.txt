@@ -1,6 +1,8 @@
 ﻿npc bude mit  list ukolu a pokud budes chtit si od nej nejaky vzit dostanes nejaky random a zkopiruje se ti do tveho lsitu aktivnich 
 
 
+problem boj hrace s hracem rozdelit boj hrace s hracem do vice metod trid prace s isInCombat 
+
 Enemy muze byt stejny jako player a bude mit stejne vlastnosti 
 
 
